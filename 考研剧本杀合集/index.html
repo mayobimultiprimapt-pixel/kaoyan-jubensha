@@ -23,6 +23,7 @@ body{background:radial-gradient(ellipse at top,#1a0a1f 0%,#050505 60%);min-heigh
 .card.math{--glow:rgba(80,150,255,.22);--border:#6aa8ff;--shadow:rgba(80,150,255,.35)}
 .card.cs{--glow:rgba(60,210,120,.22);--border:#4ade80;--shadow:rgba(60,210,120,.35)}
 .card.eng{--glow:rgba(240,170,90,.22);--border:#f0aa5a;--shadow:rgba(240,170,90,.35)}
+.card.story{--glow:rgba(157,78,221,.25);--border:#b96aff;--shadow:rgba(157,78,221,.4)}
 
 .card-icon{font-size:56px;margin-bottom:14px;display:block;filter:drop-shadow(0 0 10px var(--border))}
 .card-code{font-size:14px;color:var(--border);letter-spacing:4px;margin-bottom:4px}
@@ -50,6 +51,7 @@ body{background:radial-gradient(ellipse at top,#1a0a1f 0%,#050505 60%);min-heigh
 .card:nth-child(2){animation-delay:.2s}
 .card:nth-child(3){animation-delay:.3s}
 .card:nth-child(4){animation-delay:.4s}
+.card:nth-child(5){animation-delay:.5s}
 
 .card-progress{margin-bottom:14px;font-size:12px;letter-spacing:2px;padding:8px 0;border-top:1px dashed #3a2a1a;min-height:30px}
 .card-progress .pg-dim{color:#666}
@@ -188,6 +190,26 @@ a.card:focus-visible,button:focus-visible{outline:2px solid #d4af37;outline-offs
         </div>
         <div class="card-progress" data-role="progress"><span class="pg-dim">— 载入进度 —</span></div>
         <span class="card-play">▶ 进 入 调 查</span>
+    </a>
+
+    <a class="card story" href="../故事模式/"
+       aria-label="进入故事模式 · 沉浸式叙事（Beta）"
+       onmouseenter="hoverCard('pol')" onmouseleave="leaveCard()">
+        <div class="card-icon">📖</div>
+        <div class="card-code">STORY · BETA</div>
+        <div class="card-title">故事模式</div>
+        <div class="card-tag">沉浸式叙事 · 馆藏外传</div>
+        <div class="card-desc">
+            穿越到 1831 年法国里昂<br>
+            见证欧洲三大工人运动 · 对话马克思
+        </div>
+        <div class="card-stats">
+            <span>1 章</span>
+            <span><span class="card-stat-num">3</span> 结局</span>
+            <span>~10 分钟</span>
+        </div>
+        <div class="card-progress" data-role="progress"><span class="pg-dim">— 载入进度 —</span></div>
+        <span class="card-play">▶ 进 入 故 事</span>
     </a>
 
     <a class="card eng" href="../201剧本杀/201剧本杀.html"

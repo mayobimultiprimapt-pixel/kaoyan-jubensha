@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>故事模式 · 欧洲三大工人运动</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0a0508">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="../考研剧本杀合集/icon.svg">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" sizes="192x192" href="../考研剧本杀合集/icon-192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="../考研剧本杀合集/icon-512.png">
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</head>
+<body>
+
+<div id="stage" class="stage bg-modern"></div>
+
+<div class="topbar">
+  <div>
+    <span class="title" id="story-title">…</span>
+    <span class="subject" id="story-subject">…</span>
+  </div>
+  <div class="actions">
+    <button onclick="if(confirm('重新开始本故事？'))resetSave()" aria-label="重新开始">↺ 重开</button>
+    <button onclick="location.href='../考研剧本杀合集/'" aria-label="返回启动器">← 返回</button>
+  </div>
+</div>
+
+<div id="char-left" class="char-slot left"></div>
+<div id="char-right" class="char-slot right"></div>
+
+<div class="dialog-box">
+  <div id="name-tag" class="name-tag"></div>
+  <div id="dialog-text" class="dialog-text"></div>
+  <div id="choices" class="choices"></div>
+  <div id="continue-hint" class="continue-hint">▼ 继续（点击 / 空格）</div>
+</div>
+
+<script src="data/m1-workers.js"></script>
+<script src="engine.js"></script>
+</body>
+</html>

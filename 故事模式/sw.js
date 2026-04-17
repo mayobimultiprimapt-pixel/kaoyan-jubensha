@@ -1,13 +1,12 @@
-// 考研剧本杀 · 联合归档处 启动器 Service Worker
-const CACHE = 'exam-hub-v4';
+// 故事模式 · 馆藏外传 Service Worker
+const CACHE = 'story-mode-v1';
 const ASSETS = [
   './',
   './index.html',
+  './style.css',
+  './engine.js',
   './manifest.json',
-  './icon.svg',
-  './icon-192.png',
-  './icon-512.png',
-  './data/boot.js',
+  './data/m1-workers.js',
 ];
 
 self.addEventListener('install', e => {
