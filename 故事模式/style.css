@@ -62,11 +62,23 @@ html,body{width:100%;height:100%;overflow:hidden;color:#fff5e0;font-family:"Song
 .topbar .actions button:hover{background:rgba(212,175,55,.15);border-color:#d4af37}
 
 /* ===== 立绘 ===== */
-.char-slot{position:fixed;bottom:30%;font-size:180px;line-height:1;filter:drop-shadow(0 0 30px rgba(212,175,55,.2));opacity:0;transform:translateY(30px);transition:opacity .5s,transform .5s;z-index:2;pointer-events:none}
-.char-slot.left{left:8%}
-.char-slot.right{right:8%}
+.char-slot{position:fixed;bottom:28%;font-size:180px;line-height:1;filter:drop-shadow(0 0 30px rgba(212,175,55,.2));opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease;z-index:2;pointer-events:none;animation:portraitFloat 4s ease-in-out infinite}
+.char-slot.left{left:6%}
+.char-slot.right{right:6%}
 .char-slot.visible{opacity:1;transform:translateY(0)}
-@media(max-width:700px){.char-slot{font-size:110px;bottom:36%}}
+@keyframes portraitFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@media(max-width:700px){.char-slot{font-size:110px;bottom:36%}.char-slot.left{left:3%}.char-slot.right{right:3%}}
+
+/* 肖像立绘：椭圆遮罩 + 金色光晕 + 柔化 */
+.char-slot.portrait{font-size:0;filter:drop-shadow(0 0 25px rgba(212,175,55,.4)) drop-shadow(0 8px 20px rgba(0,0,0,.6))}
+.char-slot.portrait img{
+  max-height:60vh;
+  max-width:35vw;
+  height:auto;width:auto;
+  display:block;
+  transition:opacity .6s ease
+}
+@media(max-width:700px){.char-slot.portrait img{max-height:48vh;max-width:46vw}}
 
 /* ===== 对话框 ===== */
 .dialog-box{position:fixed;left:4%;right:4%;bottom:4%;max-width:960px;margin:0 auto;background:linear-gradient(180deg,rgba(14,10,10,.92),rgba(5,5,5,.96));border:1px solid rgba(212,175,55,.35);border-radius:12px;padding:22px 28px;z-index:5;box-shadow:0 -10px 40px rgba(0,0,0,.6),0 0 1px rgba(212,175,55,.3) inset;min-height:160px;backdrop-filter:blur(4px)}

@@ -106,7 +106,14 @@ function render() {
   leftEl.className = "char-slot left"; rightEl.className = "char-slot right";
   if (sc.face) {
     const slot = sc.pos === "right" ? rightEl : leftEl;
-    slot.textContent = sc.face;
+    // 立绘：纯 ASCII 标识符视为 portraits/<name>.png；否则当作 emoji
+    if (/^[a-z][a-z0-9_-]*$/i.test(sc.face)) {
+      slot.innerHTML = '<img src="portraits/' + sc.face + '.png" alt="" onerror="this.remove()">';
+      slot.classList.add("portrait");
+    } else {
+      slot.textContent = sc.face;
+      slot.classList.remove("portrait");
+    }
     slot.classList.add("visible");
   }
 

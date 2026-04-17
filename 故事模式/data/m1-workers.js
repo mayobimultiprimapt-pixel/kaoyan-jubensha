@@ -147,7 +147,7 @@ const STORY = {
     s_marx1: {
       bg: "paris-study",
       name: "青年马克思",
-      face: "📜",
+      face: "marx_old",
       pos: "left",
       text: "（他的书房，满桌手稿。他转头看向你——穿越的人。）\n\n你看见了这三次起义。你告诉我——它们失败的共同原因是什么？",
       choices: [
@@ -159,7 +159,7 @@ const STORY = {
     s_marx_wrong: {
       bg: "paris-study",
       name: "青年马克思",
-      face: "📜",
+      face: "marx_old",
       pos: "left",
       text: "武器？不。1831 年里昂的工人一度击溃了政府军，他们缺的从来不是武器。\n\n（他摇摇头）你还没看到本质。",
       next: "s_marx_right"
@@ -167,7 +167,7 @@ const STORY = {
     s_marx_half: {
       bg: "paris-study",
       name: "青年马克思",
-      face: "📜",
+      face: "marx_old",
       pos: "left",
       text: "资产阶级强大？——那是表象。你看到的是力量对比，没看到的是：工人阶级不知道自己为什么穷。\n\n没有理论，就不可能有自觉的运动。",
       next: "s_marx_right"
@@ -175,7 +175,7 @@ const STORY = {
     s_marx_right: {
       bg: "paris-study",
       name: "青年马克思",
-      face: "📜",
+      face: "marx_old",
       pos: "left",
       text: "对——他们缺的是理论。\n\n哲学家们只用不同的方式解释世界，问题在于——改变世界。\n\n（他把一本薄薄的小册子递给你）\n\n这个，会在 1848 年 2 月 24 日，伦敦，德文版，印出来。",
       next: "s_finale"
