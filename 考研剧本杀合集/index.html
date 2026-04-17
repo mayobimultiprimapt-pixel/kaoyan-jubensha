@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>考研剧本杀 · 联合归档处</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{min-height:100%;background:#0a0a0a;color:#fff5e0;font-family:"Songti SC","SimSun","STSong",serif;overflow-x:hidden}
+body{background:radial-gradient(ellipse at top,#1a0a1f 0%,#050505 60%);min-height:100vh;padding:40px 20px 80px}
+
+.hero{text-align:center;padding:30px 20px 40px;animation:fadeIn 1.5s}
+.logo{font-size:72px;color:#d4af37;font-family:"STKaiti",serif;text-shadow:0 0 30px #d4af37,0 0 60px #6a2a1a;letter-spacing:10px;margin-bottom:15px;animation:glowPulse 4s infinite}
+.subtitle{font-size:20px;color:#b8860b;letter-spacing:8px;margin-bottom:10px}
+.desc{font-size:14px;color:#888;letter-spacing:2px;line-height:2;max-width:720px;margin:0 auto}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:26px;max-width:1100px;margin:30px auto 0;padding:0 10px}
+
+.card{display:block;text-decoration:none;color:inherit;background:linear-gradient(160deg,rgba(30,10,10,.85),rgba(10,5,5,.95));border:1px solid #3a2a1a;border-radius:6px;padding:30px 26px;position:relative;overflow:hidden;cursor:pointer;transition:all .35s cubic-bezier(.2,.8,.2,1);box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.card::before{content:"";position:absolute;inset:0;background:linear-gradient(160deg,transparent 0%,var(--glow,rgba(212,175,55,.18)) 100%);opacity:0;transition:opacity .4s;pointer-events:none}
+.card:hover{transform:translateY(-6px) scale(1.02);border-color:var(--border,#d4af37);box-shadow:0 14px 40px var(--shadow,rgba(212,175,55,.3))}
+.card:hover::before{opacity:1}
+.card.pol{--glow:rgba(220,60,60,.22);--border:#e85050;--shadow:rgba(220,60,60,.35)}
+.card.math{--glow:rgba(80,150,255,.22);--border:#6aa8ff;--shadow:rgba(80,150,255,.35)}
+.card.cs{--glow:rgba(60,210,120,.22);--border:#4ade80;--shadow:rgba(60,210,120,.35)}
+.card.eng{--glow:rgba(240,170,90,.22);--border:#f0aa5a;--shadow:rgba(240,170,90,.35)}
+
+.card-icon{font-size:56px;margin-bottom:14px;display:block;filter:drop-shadow(0 0 10px var(--border))}
+.card-code{font-size:14px;color:var(--border);letter-spacing:4px;margin-bottom:4px}
+.card-title{font-size:26px;font-family:"STKaiti",serif;color:#fff5e0;letter-spacing:4px;margin-bottom:14px}
+.card-tag{font-size:13px;color:#a0a0a0;letter-spacing:2px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed #3a2a1a}
+.card-desc{font-size:13px;color:#b8a87a;line-height:1.9;margin-bottom:16px;min-height:68px}
+.card-stats{display:flex;justify-content:space-between;font-size:12px;color:#888;letter-spacing:1px;margin-bottom:18px}
+.card-stat-num{color:var(--border);font-weight:bold;font-size:16px}
+.card-play{display:inline-block;padding:8px 18px;border:1px solid var(--border);color:var(--border);font-size:13px;letter-spacing:3px;border-radius:3px;transition:all .25s}
+.card:hover .card-play{background:var(--border);color:#0a0a0a}
+
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(0deg,rgba(10,5,5,.95),transparent);padding:16px;display:flex;justify-content:center;gap:12px;z-index:50}
+.btn{background:rgba(26,10,10,.9);border:1px solid #5a2a1a;color:#d4af37;padding:10px 20px;font-size:14px;letter-spacing:2px;cursor:pointer;font-family:inherit;border-radius:3px;transition:all .2s}
+.btn:hover{border-color:#d4af37;background:rgba(212,175,55,.15)}
+.btn.active{background:#d4af37;color:#0a0a0a}
+.track-info{font-size:12px;color:#888;align-self:center;letter-spacing:1px;min-width:200px;text-align:center}
+
+.credits{text-align:center;color:#555;font-size:11px;letter-spacing:2px;margin-top:50px;padding-bottom:60px}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glowPulse{0%,100%{text-shadow:0 0 30px #d4af37,0 0 60px #6a2a1a}50%{text-shadow:0 0 50px #d4af37,0 0 100px #6a2a1a,0 0 120px #d4af37}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.card{animation:fadeInUp .8s both}
+.card:nth-child(1){animation-delay:.1s}
+.card:nth-child(2){animation-delay:.2s}
+.card:nth-child(3){animation-delay:.3s}
+.card:nth-child(4){animation-delay:.4s}
+
+.card-progress{margin-bottom:14px;font-size:12px;letter-spacing:2px;padding:8px 0;border-top:1px dashed #3a2a1a;min-height:30px}
+.card-progress .pg-dim{color:#666}
+.card-progress .pg-run{color:var(--border,#d4af37)}
+.card-progress .pg-win{color:#6ada80;font-weight:600;letter-spacing:1px}
+.card-progress .pg-bar{display:inline-block;width:120px;height:5px;background:rgba(255,255,255,.06);border-radius:3px;margin-left:6px;overflow:hidden;vertical-align:middle}
+.card-progress .pg-bar>span{display:block;height:100%;background:currentColor;transition:width .6s ease}
+
+.notes{max-width:720px;margin:40px auto 0;color:#888;font-size:13px;line-height:2;letter-spacing:1px;padding:20px;border:1px dashed #3a2a1a;border-radius:4px;background:rgba(20,10,10,.4)}
+.notes h3{color:#d4af37;font-size:15px;letter-spacing:3px;margin-bottom:12px;font-family:"STKaiti",serif}
+.notes ul{padding-left:22px}
+.notes li{margin-bottom:6px}
+.notes code{background:rgba(212,175,55,.15);color:#d4af37;padding:1px 6px;border-radius:2px;font-size:12px}
+
+/* ======== Mobile responsive · launcher ======== */
+@media (max-width:768px){
+  body{padding:20px 12px 100px !important}
+  .logo{font-size:44px !important;letter-spacing:4px !important}
+  .subtitle{font-size:16px !important;letter-spacing:4px !important}
+  .desc{font-size:13px !important;line-height:1.9 !important}
+  .hero{padding:20px 6px 26px !important}
+  .grid{grid-template-columns:1fr !important;gap:18px !important}
+  .card{padding:22px 20px !important}
+  .card-icon{font-size:46px !important}
+  .card-title{font-size:22px !important;letter-spacing:3px !important}
+  .card-code{font-size:12px !important;letter-spacing:3px !important}
+  .card-desc{font-size:13px !important;min-height:auto !important}
+  .card-tag{font-size:12px !important}
+  .bottom-bar{flex-wrap:wrap;padding:10px !important}
+  .btn{padding:10px 14px !important;font-size:12px !important;letter-spacing:1px !important}
+  .track-info{min-width:auto !important;flex-basis:100%;font-size:11px !important;padding:4px 0}
+  .notes{font-size:12px !important;line-height:1.9 !important;padding:15px !important}
+  .notes code{font-size:10px !important;word-break:break-all}
+}
+@supports(padding:max(0px)){
+  body{padding-bottom:max(100px,calc(env(safe-area-inset-bottom) + 80px)) !important}
+}
+
+
+/* ───── 键盘焦点可视化 (a11y) ───── */
+a.card:focus-visible,button:focus-visible{outline:2px solid #d4af37;outline-offset:3px;box-shadow:0 0 0 5px rgba(212,175,55,.28)}
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+<meta name="theme-color" content="#6a2a8a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="考研归档处">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+<script src="data/boot.js"></script>
+</head>
+<body>
+
+<div class="hero">
+    <div class="logo">考研·归档处</div>
+    <div class="subtitle">Joint Archive</div>
+    <div class="desc">
+        四大科目 · 四场失窃 · 四位馆长 · 一百九十八间房<br>
+        <span style="color:#b8860b">红宝书 · 微言玄卷 · 墨语之卷 · 千卷之书</span><br>
+        沉浸式知识推理剧本杀 · 按你喜欢的顺序走进任意一场
+    </div>
+</div>
+
+<div class="grid">
+    <a class="card pol" href="../101剧本杀/101剧本杀.html"
+       data-subject="101" data-total="44"
+       aria-label="进入 101 政治 · 红宝书之谜"
+       onmouseenter="hoverCard('pol')" onmouseleave="leaveCard()">
+        <div class="card-icon">📕</div>
+        <div class="card-code">101 · 政 治</div>
+        <div class="card-title">红宝书之谜</div>
+        <div class="card-tag">藏心·求真 · 馆长 沈藏心</div>
+        <div class="card-desc">
+            马原 · 毛概 · 史纲 · 思法 · 形势政策<br>
+            三道密锁熔为金水 · 5 天 5 夜破案
+        </div>
+        <div class="card-stats">
+            <span>5 展区</span>
+            <span><span class="card-stat-num">44</span> 房间</span>
+            <span>3 结局</span>
+        </div>
+        <div class="card-progress" data-role="progress"><span class="pg-dim">— 载入进度 —</span></div>
+        <span class="card-play">▶ 进 入 调 查</span>
+    </a>
+
+    <a class="card math" href="../301剧本杀/301剧本杀.html"
+       data-subject="301" data-total="65"
+       aria-label="进入 301 数学一 · 微言玄卷之谜"
+       onmouseenter="hoverCard('math')" onmouseleave="leaveCard()">
+        <div class="card-icon">📘</div>
+        <div class="card-code">301 · 数 学 一</div>
+        <div class="card-title">微言玄卷之谜</div>
+        <div class="card-tag">若虚·求真 · 馆长 陈若虚</div>
+        <div class="card-desc">
+            高数 · 线性代数 · 概率统计<br>
+            九宫密阵尽数熔解 · 9 位主任皆有嫌疑
+        </div>
+        <div class="card-stats">
+            <span>9 展区</span>
+            <span><span class="card-stat-num">65</span> 房间</span>
+            <span>3 结局</span>
+        </div>
+        <div class="card-progress" data-role="progress"><span class="pg-dim">— 载入进度 —</span></div>
+        <span class="card-play">▶ 进 入 调 查</span>
+    </a>
+
+    <a class="card cs" href="../408剧本杀/408剧本杀.html"
+       data-subject="408" data-total="48"
+       aria-label="进入 408 计算机 · 墨语之卷之谜"
+       onmouseenter="hoverCard('cs')" onmouseleave="leaveCard()">
+        <div class="card-icon">📗</div>
+        <div class="card-code">408 · 计 算 机</div>
+        <div class="card-title">墨语之卷之谜</div>
+        <div class="card-tag">溯涟·求真 · 馆长 林溯涟</div>
+        <div class="card-desc">
+            数据结构 · 计组 · 操统 · 计网<br>
+            四科方阵尽数熔解 · 1969°C 熔蜡之谜
+        </div>
+        <div class="card-stats">
+            <span>4 展区</span>
+            <span><span class="card-stat-num">48</span> 房间</span>
+            <span>3 结局</span>
+        </div>
+        <div class="card-progress" data-role="progress"><span class="pg-dim">— 载入进度 —</span></div>
+        <span class="card-play">▶ 进 入 调 查</span>
+    </a>
+
+    <a class="card eng" href="../201剧本杀/201剧本杀.html"
+       data-subject="201" data-total="45"
+       aria-label="进入 201 英语一 · 千卷之书之谜"
+       onmouseenter="hoverCard('eng')" onmouseleave="leaveCard()">
+        <div class="card-icon">📙</div>
+        <div class="card-code">201 · 英 语 一</div>
+        <div class="card-title">千卷之书之谜</div>
+        <div class="card-tag">漪兰·求真 · 馆长 石漪兰</div>
+        <div class="card-desc">
+            词汇 · 语法 · 完形 · 阅读 · 翻译 · 写作<br>
+            六扉封蜡尽数熔解 · 1066°C 诺曼之温
+        </div>
+        <div class="card-stats">
+            <span>6 展区</span>
+            <span><span class="card-stat-num">45</span> 房间</span>
+            <span>3 结局</span>
+        </div>
+        <div class="card-progress" data-role="progress"><span class="pg-dim">— 载入进度 —</span></div>
+        <span class="card-play">▶ 进 入 调 查</span>
+    </a>
+</div>
+
+<div class="notes">
+    <h3>◆ 使用说明</h3>
+    <ul>
+        <li>点击任一科目卡片即进入对应游戏。鼠标悬停可试听该科目的主题 BGM 片段。</li>
+        <li>每个科目游戏均独立存档（<code>localStorage</code>），互不影响，中途可切换。</li>
+        <li>游戏内左下角 🔊 / 🎵 按钮控制音效与场景 BGM 开关。</li>
+        <li>通关后可在游戏内导出 PDF 通关纪念册（含评级+推理答卷）。</li>
+        <li>想速通推理厅测试终章，在游戏内按 F12 打开 Console 粘贴：<br><code>Object.keys(ROOMS).forEach(r=>{state.visited[r]=true;state.badges.push(r)});state.keys=Object.keys(ZONES);state.stage='sandbox';state.deduction=null;state.flags={};renderStage();renderSidebar()</code></li>
+    </ul>
+</div>
+
+<div class="bottom-bar">
+    <button class="btn" id="btn-bgm" onclick="toggleBgm()">🎵 氛围 BGM</button>
+    <div class="track-info" id="track-info">—— 尚未启动 ——</div>
+    <button class="btn" onclick="openAll()">🗂 打开全部四科</button>
+</div>
+
+<div class="credits">
+    MADE WITH CLAUDE CODE · 2026 · 本合集仅为学习/记忆辅助之用
+</div>
+
+<script>
+// ============ 多轨 BGM 引擎 (与各子游戏一致的频率表与合成器) ============
+let ac=null, bgmOn=false;
+let bgmNodes=[], bgmSchedulerId=null, currentBgm=null, bgmGainNode=null;
+const NOTES={
+    A1:55.00,As1:58.27,B1:61.74,
+    C2:65.41,Cs2:69.30,D2:73.42,Ds2:77.78,E2:82.41,F2:87.31,Fs2:92.50,G2:98.00,Gs2:103.83,A2:110.00,As2:116.54,B2:123.47,
+    C3:130.81,Cs3:138.59,D3:146.83,Ds3:155.56,E3:164.81,F3:174.61,Fs3:185.00,G3:196.00,Gs3:207.65,A3:220.00,As3:233.08,B3:246.94,
+    C4:261.63,Cs4:277.18,D4:293.66,Ds4:311.13,E4:329.63,F4:349.23,Fs4:369.99,G4:392.00,Gs4:415.30,A4:440.00,As4:466.16,B4:493.88,
+    C5:523.25,Cs5:554.37,D5:587.33,Ds5:622.25,E5:659.25,F5:698.46,Fs5:739.99,G5:783.99,Gs5:830.61,A5:880.00,As5:932.33,B5:987.77,
+    C6:1046.50,D6:1174.66,E6:1318.51,F6:1396.91,G6:1567.98,
+    REST:0
+};
+function initAudio(){if(!ac){try{ac=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}}
+function initBgmGain(){if(!ac||bgmGainNode)return;bgmGainNode=ac.createGain();bgmGainNode.gain.value=0.6;bgmGainNode.connect(ac.destination)}
+function bgmTone(freq,start,dur,type,vol){
+    if(!ac||!bgmGainNode||!freq||freq<=0)return;
+    type=type||'sine';vol=vol==null?0.05:vol;
+    const o=ac.createOscillator(),g=ac.createGain();
+    o.type=type;o.frequency.setValueAtTime(freq,start);
+    g.gain.setValueAtTime(0,start);
+    g.gain.linearRampToValueAtTime(vol,start+0.04);
+    g.gain.linearRampToValueAtTime(vol*0.65,start+dur*0.6);
+    g.gain.exponentialRampToValueAtTime(0.0005,start+dur);
+    o.connect(g);g.connect(bgmGainNode);
+    o.start(start);o.stop(start+dur+0.08);
+    bgmNodes.push({o,g});
+}
+function playTrack(t,t0,bl){
+    const totalDur=t.loopBeats*bl;
+    (t.drones||[]).forEach(d=>bgmTone(NOTES[d.n],t0,totalDur,d.t||'sine',d.v||0.04));
+    let cur=t0;
+    (t.melody||[]).forEach(m=>{const d=m.d*bl;if(m.n&&m.n!=='REST'&&NOTES[m.n])bgmTone(NOTES[m.n],cur,d*0.95,m.t||'triangle',m.v||0.05);cur+=d});
+    if(t.bass){let c=t0;t.bass.forEach(m=>{const d=m.d*bl;if(m.n&&m.n!=='REST'&&NOTES[m.n])bgmTone(NOTES[m.n],c,d*0.95,m.t||'sine',m.v||0.04);c+=d})}
+}
+
+// 5 首主题 BGM
+const BGM_TRACKS={
+    // 启动器氛围: 归档处夜景 · D 小调缓慢 drone + 铃
+    entry:{name:'联合归档处·夜',tempo:56,loopBeats:16,
+        drones:[{n:'D2',v:0.045,t:'sine'},{n:'A2',v:0.03,t:'sine'},{n:'F3',v:0.02,t:'sine'}],
+        melody:[{n:'REST',d:4,v:0,t:'sine'},{n:'D5',d:2,v:0.04,t:'triangle'},{n:'F5',d:2,v:0.04,t:'triangle'},{n:'A5',d:3,v:0.045,t:'triangle'},{n:'REST',d:1,v:0,t:'sine'},{n:'G5',d:2,v:0.035,t:'triangle'},{n:'F5',d:2,v:0.035,t:'triangle'}]},
+    // 101 政治: C 大调进行曲 · 庄严红色
+    pol:{name:'101·藏心求真·进行曲',tempo:100,loopBeats:16,
+        drones:[{n:'C3',v:0.035,t:'sine'}],
+        bass:[{n:'C2',d:2,v:0.05,t:'sawtooth'},{n:'G2',d:2,v:0.045,t:'sawtooth'},{n:'C2',d:2,v:0.05,t:'sawtooth'},{n:'G2',d:2,v:0.045,t:'sawtooth'},{n:'F2',d:2,v:0.045,t:'sawtooth'},{n:'C2',d:2,v:0.05,t:'sawtooth'},{n:'G2',d:2,v:0.045,t:'sawtooth'},{n:'C2',d:2,v:0.05,t:'sawtooth'}],
+        melody:[{n:'E4',d:1,v:0.05,t:'square'},{n:'G4',d:1,v:0.05,t:'square'},{n:'C5',d:2,v:0.055,t:'square'},{n:'E5',d:1,v:0.05,t:'square'},{n:'D5',d:1,v:0.045,t:'square'},{n:'C5',d:2,v:0.055,t:'square'},{n:'G4',d:2,v:0.045,t:'square'},{n:'C5',d:2,v:0.05,t:'square'},{n:'G5',d:2,v:0.05,t:'square'},{n:'C5',d:2,v:0.055,t:'square'}]},
+    // 301 数学一: 神秘空灵 · 五声调式 · 蓝色理性
+    math:{name:'301·若虚求真·五声幽谷',tempo:68,loopBeats:16,
+        drones:[{n:'D3',v:0.04,t:'sine'},{n:'A3',v:0.03,t:'sine'}],
+        melody:[{n:'D5',d:2,v:0.05,t:'triangle'},{n:'F5',d:2,v:0.045,t:'triangle'},{n:'G5',d:2,v:0.05,t:'triangle'},{n:'A5',d:2,v:0.055,t:'triangle'},{n:'G5',d:1,v:0.04,t:'triangle'},{n:'F5',d:1,v:0.04,t:'triangle'},{n:'D5',d:2,v:0.045,t:'triangle'},{n:'A4',d:2,v:0.045,t:'triangle'},{n:'D5',d:2,v:0.05,t:'triangle'}]},
+    // 408 计算机: 电子脉冲 · D 小调 · 绿色数字
+    cs:{name:'408·溯涟求真·比特脉冲',tempo:120,loopBeats:16,
+        drones:[{n:'D3',v:0.025,t:'sawtooth'}],
+        bass:[{n:'D2',d:1,v:0.045,t:'square'},{n:'A2',d:1,v:0.04,t:'square'},{n:'D2',d:1,v:0.045,t:'square'},{n:'A2',d:1,v:0.04,t:'square'},{n:'F2',d:1,v:0.04,t:'square'},{n:'A2',d:1,v:0.04,t:'square'},{n:'D2',d:1,v:0.045,t:'square'},{n:'A2',d:1,v:0.04,t:'square'},{n:'G2',d:1,v:0.04,t:'square'},{n:'D3',d:1,v:0.04,t:'square'},{n:'A2',d:1,v:0.04,t:'square'},{n:'D2',d:1,v:0.045,t:'square'},{n:'F2',d:1,v:0.04,t:'square'},{n:'A2',d:1,v:0.04,t:'square'},{n:'D2',d:1,v:0.045,t:'square'},{n:'A2',d:1,v:0.04,t:'square'}],
+        melody:[{n:'D5',d:1,v:0.04,t:'square'},{n:'F5',d:1,v:0.04,t:'square'},{n:'A5',d:2,v:0.045,t:'square'},{n:'F5',d:1,v:0.04,t:'square'},{n:'D5',d:1,v:0.04,t:'square'},{n:'E5',d:2,v:0.04,t:'square'},{n:'A4',d:2,v:0.04,t:'square'},{n:'D5',d:2,v:0.04,t:'square'},{n:'F5',d:2,v:0.04,t:'square'},{n:'A5',d:2,v:0.045,t:'square'}]},
+    // 201 英语一: 古典抒情 · A 小调 · 琥珀人文
+    eng:{name:'201·漪兰求真·古典抒情',tempo:64,loopBeats:16,
+        drones:[{n:'A2',v:0.04,t:'sine'},{n:'E3',v:0.03,t:'sine'}],
+        melody:[{n:'A4',d:2,v:0.05,t:'triangle'},{n:'C5',d:2,v:0.045,t:'triangle'},{n:'E5',d:2,v:0.05,t:'triangle'},{n:'A5',d:3,v:0.055,t:'triangle'},{n:'G5',d:1,v:0.045,t:'triangle'},{n:'F5',d:2,v:0.045,t:'triangle'},{n:'E5',d:2,v:0.045,t:'triangle'},{n:'C5',d:2,v:0.045,t:'triangle'}]}
+};
+
+function stopBgmAll(cross){
+    if(bgmSchedulerId){clearTimeout(bgmSchedulerId);bgmSchedulerId=null}
+    currentBgm=null;
+    if(!ac)return;
+    const now=ac.currentTime;const fade=cross?0.5:0.3;
+    bgmNodes.forEach(n=>{try{
+        n.g.gain.cancelScheduledValues(now);
+        n.g.gain.setValueAtTime(n.g.gain.value||0.05,now);
+        n.g.gain.linearRampToValueAtTime(0.0001,now+fade);
+        n.o.stop(now+fade+0.05);
+    }catch(e){}});
+    bgmNodes=[];
+}
+function startBgmTrack(id){
+    if(!id||currentBgm===id)return;
+    stopBgmAll(true);
+    if(!bgmOn||!ac)return;
+    currentBgm=id;
+    const t=BGM_TRACKS[id];if(!t)return;
+    initBgmGain();
+    const bl=60/t.tempo;const loopLen=t.loopBeats*bl;
+    const loop=()=>{
+        if(!bgmOn||currentBgm!==id||!ac)return;
+        playTrack(t,ac.currentTime+0.05,bl);
+        bgmSchedulerId=setTimeout(loop,loopLen*1000-80);
+    };
+    loop();
+    document.getElementById('track-info').textContent='♪ '+t.name;
+}
+function toggleBgm(){
+    initAudio();
+    bgmOn=!bgmOn;
+    const btn=document.getElementById('btn-bgm');
+    btn.classList.toggle('active',bgmOn);
+    if(bgmOn){startBgmTrack('entry')}
+    else{stopBgmAll();document.getElementById('track-info').textContent='—— BGM 已关闭 ——'}
+}
+function hoverCard(id){
+    if(!bgmOn){initAudio();bgmOn=true;document.getElementById('btn-bgm').classList.add('active')}
+    startBgmTrack(id);
+}
+function leaveCard(){
+    if(!bgmOn)return;
+    startBgmTrack('entry');
+}
+function openAll(){
+    if(!confirm('将在四个新标签页中打开全部四科，确定？')) return;
+    ['../101剧本杀/101剧本杀.html','../301剧本杀/301剧本杀.html','../408剧本杀/408剧本杀.html','../201剧本杀/201剧本杀.html'].forEach(u=>window.open(u,'_blank'));
+}
+
+document.addEventListener('click',()=>{if(!ac)initAudio()},{once:true});
+
+// ============ 各科进度显示 ============
+function _readSubjectProgress(subject){
+    try{
+        const raw=localStorage.getItem('exam_'+subject+'_progress');
+        if(raw){const p=JSON.parse(raw);if(p&&p.data)return p.data}
+        const legacy=localStorage.getItem('101_rpg_save');
+        if(legacy)return JSON.parse(legacy);
+    }catch(e){}
+    return null;
+}
+function renderSubjectProgress(){
+    document.querySelectorAll('.card[data-subject]').forEach(card=>{
+        const subject=card.dataset.subject;
+        const total=parseInt(card.dataset.total,10)||0;
+        const slot=card.querySelector('[data-role="progress"]');
+        if(!slot)return;
+        const st=_readSubjectProgress(subject);
+        if(!st){slot.innerHTML='<span class="pg-dim">— 未开始 —</span>';return}
+        const badges=(st.badges&&st.badges.length)||0;
+        const pct=total?Math.min(100,Math.round(badges/total*100)):0;
+        if(st.ending){
+            slot.innerHTML='<span class="pg-win">✓ 已通关 · '+badges+'/'+total+' 徽章<span class="pg-bar"><span style="width:'+pct+'%"></span></span></span>';
+        }else{
+            slot.innerHTML='<span class="pg-run">继续调查 · '+badges+'/'+total+' 徽章<span class="pg-bar"><span style="width:'+pct+'%"></span></span></span>';
+        }
+    });
+}
+renderSubjectProgress();
+window.addEventListener('pageshow',renderSubjectProgress);
+</script>
+</body>
+</html>

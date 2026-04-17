@@ -1,0 +1,19 @@
+{
+  "name": "101 · 红宝书之谜",
+  "short_name": "101 政治",
+  "description": "101 · 红宝书之谜 · 沉浸式知识推理剧本杀",
+  "id": "/101剧本杀/101剧本杀.html",
+  "start_url": "./101剧本杀.html",
+  "scope": "../",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0a0a0a",
+  "theme_color": "#8b0000",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon.svg",     "sizes": "any",     "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

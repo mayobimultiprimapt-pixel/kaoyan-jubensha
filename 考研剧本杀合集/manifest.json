@@ -1,0 +1,19 @@
+{
+  "name": "考研 · 联合归档处",
+  "short_name": "考研归档处",
+  "description": "考研 · 联合归档处 · 沉浸式知识推理剧本杀",
+  "id": "/考研剧本杀合集/index.html",
+  "start_url": "./index.html",
+  "scope": "../",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0a0a0a",
+  "theme_color": "#6a2a8a",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon.svg",     "sizes": "any",     "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 本地生成 / 敏感
+qr.png
+/tmp/
+*.log
+
+# 无关目录
+Matrix_Vault/
+
+# Windows 快捷方式（本地路径，公开无意义）
+*.url
+
+# 提示词原料（核心 IP，不公开；需要时可注释本行）
+*.docx
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 编辑器
+.idea/
+.vscode/
+*.swp

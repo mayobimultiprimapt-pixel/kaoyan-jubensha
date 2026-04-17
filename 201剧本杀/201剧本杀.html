@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>201 失窃档案 · 千卷之书之谜</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:#0a0a0a;color:#fff5e0;font-family:"Songti SC","SimSun","STSong",serif;font-size:17px;line-height:1.75}
+body{background:radial-gradient(ellipse at center,#1a0a0a 0%,#050505 70%);}
+#app{display:flex;height:100vh;position:relative}
+#stage{flex:1;padding:30px 40px;overflow-y:auto;position:relative}
+#sidebar{width:280px;background:linear-gradient(180deg,#1a0a0a,#0a0000);border-left:2px solid #3a2a0a;padding:20px;overflow-y:auto;box-shadow:-5px 0 20px rgba(0,0,0,.5)}
+
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:#0a0a0a}
+::-webkit-scrollbar-thumb{background:#4a3a1a;border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:#6a5a2a}
+
+.title-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;animation:fadeIn 2s}
+.title-logo{font-size:84px;color:#d4af37;font-family:"STKaiti",serif;text-shadow:0 0 30px #d4af37,0 0 60px #8b0000;letter-spacing:8px;margin-bottom:20px;animation:glowPulse 3s infinite}
+.title-sub{font-size:24px;color:#b8860b;letter-spacing:10px;margin-bottom:60px}
+.title-desc{font-size:16px;color:#888;max-width:600px;line-height:2;margin-bottom:50px}
+.btn-primary{background:linear-gradient(135deg,#8b0000,#d4af37);color:#fff5e0;border:none;padding:15px 60px;font-size:20px;letter-spacing:4px;cursor:pointer;border-radius:3px;font-family:inherit;transition:all .3s;box-shadow:0 0 20px rgba(212,175,55,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(212,175,55,.6)}
+.btn-ghost{background:transparent;color:#d4af37;border:1px solid #d4af37;padding:10px 25px;font-size:15px;cursor:pointer;font-family:inherit;margin:5px;border-radius:2px;transition:all .2s}
+.btn-ghost:hover{background:#d4af37;color:#0a0a0a}
+.btn-choice{display:block;width:100%;background:rgba(139,0,0,.15);border:1px solid #5a2a2a;color:#fff5e0;padding:12px 20px;margin:8px 0;font-size:16px;cursor:pointer;text-align:left;font-family:inherit;border-radius:3px;transition:all .2s}
+.btn-choice:hover{background:rgba(212,175,55,.15);border-color:#d4af37;transform:translateX(5px)}
+.btn-choice.selected{background:rgba(212,175,55,.3);border-color:#d4af37;color:#d4af37}
+
+.narration{background:rgba(0,0,0,.5);border-left:3px solid #d4af37;padding:20px 25px;margin:20px 0;font-size:17px;line-height:2;color:#e8d7b0;font-style:italic;animation:slideIn .8s}
+.scene-title{font-size:28px;color:#d4af37;font-family:"STKaiti",serif;letter-spacing:4px;margin-bottom:15px;border-bottom:1px solid #3a2a0a;padding-bottom:10px}
+.scene-meta{font-size:13px;color:#888;margin-bottom:20px;letter-spacing:2px}
+
+.guardian{background:rgba(139,0,0,.1);border:1px solid #5a2a2a;padding:20px;margin:20px 0;border-radius:5px}
+.guardian-header{display:flex;align-items:center;margin-bottom:15px}
+.guardian-avatar{font-size:42px;margin-right:15px;filter:drop-shadow(0 0 10px #d4af37)}
+.guardian-name{font-size:20px;color:#d4af37;font-family:"STKaiti",serif}
+.guardian-speech{color:#fff5e0;font-size:17px;line-height:2;padding:10px 0 10px 55px;position:relative}
+.guardian-speech::before{content:"「";color:#d4af37;font-size:32px;position:absolute;left:20px;top:0}
+.guardian-speech::after{content:"」";color:#d4af37;font-size:32px;margin-left:5px}
+
+.puzzle{background:rgba(26,15,5,.7);border:2px solid #d4af37;padding:25px;margin:25px 0;border-radius:5px;box-shadow:0 0 30px rgba(212,175,55,.15)}
+.puzzle-label{font-size:13px;color:#b8860b;letter-spacing:4px;margin-bottom:10px}
+.puzzle-q{font-size:18px;color:#fff5e0;line-height:1.9;margin-bottom:20px}
+.puzzle-input{width:100%;background:#0a0505;border:1px solid #5a2a2a;color:#fff5e0;padding:12px 15px;font-size:17px;font-family:inherit;border-radius:3px;outline:none}
+.puzzle-input:focus{border-color:#d4af37;box-shadow:0 0 10px rgba(212,175,55,.3)}
+.puzzle-hint{font-size:14px;color:#888;margin-top:12px;font-style:italic}
+.puzzle-feedback{margin-top:15px;padding:10px 15px;border-radius:3px;font-size:15px;animation:fadeIn .5s}
+.pf-wrong{background:rgba(255,48,48,.1);border-left:3px solid #ff3030;color:#ffaaaa}
+.pf-right{background:rgba(48,255,48,.1);border-left:3px solid #30ff30;color:#aaffaa}
+.pf-hint{background:rgba(212,175,55,.1);border-left:3px solid #d4af37;color:#e8d7b0}
+
+/* ============ teachingMoment · 先理解再答题 ============ */
+.teaching{background:linear-gradient(135deg,rgba(10,30,50,.55),rgba(20,40,70,.45));border:1px solid #4a90a4;border-radius:6px;padding:25px 30px;margin:20px 0;position:relative;box-shadow:0 0 25px rgba(74,144,164,.15);animation:slideIn .8s}
+.teaching::before{content:"◇";color:#7ec8e3;font-size:22px;position:absolute;top:-14px;left:20px;background:#0a0a0a;padding:0 10px}
+.teaching-label{color:#7ec8e3;font-size:13px;letter-spacing:5px;margin-bottom:18px;font-family:"STKaiti",serif}
+.teaching-body{color:#e0f4ff;font-size:16.5px;line-height:2.1;white-space:pre-wrap;font-style:normal}
+.teaching-core{background:linear-gradient(135deg,#d4af37,#ffe58a);color:#1a0a0a;padding:14px 22px;margin-top:22px;border-radius:4px;font-size:16.5px;font-weight:bold;letter-spacing:2px;text-align:center;font-family:"STKaiti",serif;box-shadow:0 4px 15px rgba(212,175,55,.3)}
+.teaching-core::before{content:"✦ ";color:#5a3a0a}
+.teaching-core::after{content:" ✦";color:#5a3a0a}
+.btn-teaching{background:linear-gradient(135deg,#4a90a4,#7ec8e3);color:#0a1a2a;border:none;padding:13px 40px;font-size:17px;letter-spacing:3px;cursor:pointer;border-radius:3px;font-family:inherit;margin:5px;transition:all .3s;box-shadow:0 0 15px rgba(126,200,227,.25)}
+.btn-teaching:hover{transform:translateY(-2px);box-shadow:0 0 25px rgba(126,200,227,.5)}
+
+/* 多空填空 */
+.multi-fill-grid{display:grid;grid-template-columns:120px 1fr;gap:10px 15px;align-items:center;margin:15px 0}
+.multi-fill-label{color:#d4af37;font-size:15px;text-align:right}
+/* 排序 */
+.order-list{list-style:none;padding:0;margin:15px 0}
+.order-item{background:rgba(26,15,5,.8);border:1px solid #5a2a2a;color:#fff5e0;padding:14px 20px;margin:8px 0;border-radius:3px;cursor:pointer;display:flex;align-items:center;transition:all .2s;user-select:none}
+.order-item:hover{background:rgba(139,0,0,.2);border-color:#d4af37}
+.order-item.selected{background:rgba(212,175,55,.3);border-color:#d4af37;color:#d4af37}
+.order-num{display:inline-block;width:28px;height:28px;border-radius:50%;background:#d4af37;color:#0a0a0a;text-align:center;line-height:28px;font-weight:bold;margin-right:15px;font-family:"STKaiti",serif}
+/* 多选 */
+.multi-opts{margin:15px 0}
+.multi-opt{display:flex;align-items:center;background:rgba(26,15,5,.5);border:1px solid #3a2a0a;padding:12px 18px;margin:6px 0;cursor:pointer;border-radius:3px;transition:all .2s}
+.multi-opt:hover{border-color:#d4af37;background:rgba(212,175,55,.1)}
+.multi-opt.checked{border-color:#d4af37;background:rgba(212,175,55,.25);color:#fff5e0}
+.multi-check{width:20px;height:20px;border:2px solid #5a2a2a;border-radius:3px;margin-right:15px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#d4af37}
+.multi-opt.checked .multi-check{background:#d4af37;border-color:#d4af37;color:#0a0a0a}
+/* 配对 */
+.match-board{display:grid;grid-template-columns:1fr 50px 1fr;gap:10px 15px;align-items:center;margin:15px 0}
+.match-col{display:flex;flex-direction:column;gap:8px}
+.match-cell{background:rgba(26,15,5,.5);border:1px solid #3a2a0a;padding:10px 15px;cursor:pointer;border-radius:3px;transition:all .2s;text-align:center;font-size:15px;min-height:48px;display:flex;align-items:center;justify-content:center}
+.match-cell:hover{border-color:#d4af37;background:rgba(212,175,55,.1)}
+.match-cell.active{background:rgba(212,175,55,.35);border-color:#d4af37;color:#d4af37}
+.match-cell.paired{border-color:#30ff30;background:rgba(48,255,48,.1)}
+.match-arrow{color:#888;text-align:center;font-size:14px}
+
+.sandbox{padding:20px}
+.sandbox-title{font-size:32px;color:#d4af37;font-family:"STKaiti",serif;text-align:center;margin-bottom:10px;letter-spacing:4px}
+.sandbox-sub{text-align:center;color:#888;margin-bottom:40px}
+.zones{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:900px;margin:0 auto}
+.zone{background:linear-gradient(135deg,rgba(139,0,0,.2),rgba(26,10,5,.8));border:1px solid #5a2a2a;padding:25px;border-radius:5px;cursor:pointer;transition:all .3s;text-align:center}
+.zone:hover{border-color:#d4af37;transform:translateY(-3px);box-shadow:0 10px 30px rgba(212,175,55,.2)}
+.zone.done{background:linear-gradient(135deg,rgba(212,175,55,.3),rgba(139,0,0,.3));border-color:#d4af37}
+.zone-icon{font-size:48px;margin-bottom:10px;display:block}
+.zone-name{font-size:22px;color:#d4af37;font-family:"STKaiti",serif;margin-bottom:8px}
+.zone-npc{font-size:14px;color:#b8860b;margin-bottom:6px}
+.zone-progress{font-size:13px;color:#888}
+
+.room-list{max-width:800px;margin:20px auto}
+.room-item{background:rgba(26,10,5,.5);border:1px solid #3a2a0a;padding:15px 20px;margin:10px 0;border-radius:3px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .2s}
+.room-item:hover{border-color:#d4af37;background:rgba(139,0,0,.15)}
+.room-item.done{border-color:#d4af37;background:rgba(212,175,55,.1)}
+.room-item.locked{opacity:.4;cursor:not-allowed}
+.room-label{flex:1}
+.room-title-txt{font-size:17px;color:#fff5e0;font-weight:bold}
+.room-ch{font-size:13px;color:#888;margin-top:3px}
+.room-status{font-size:22px;margin-left:15px}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes glowPulse{0%,100%{text-shadow:0 0 30px #d4af37,0 0 60px #8b0000}50%{text-shadow:0 0 50px #d4af37,0 0 90px #8b0000,0 0 100px #d4af37}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.shake{animation:shake .4s}
+.header-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid #3a2a0a}
+.mini-logo{color:#d4af37;font-family:"STKaiti",serif;font-size:18px;letter-spacing:3px}
+.progress-bar{display:flex;align-items:center;gap:10px;color:#888;font-size:13px}
+.ending-screen{text-align:center;padding:50px;animation:fadeIn 1.5s}
+.ending-screen h1{font-size:48px;color:#d4af37;font-family:"STKaiti",serif;letter-spacing:6px;margin-bottom:30px}
+.ending-screen p{font-size:17px;line-height:2.2;color:#e8d7b0;max-width:700px;margin:0 auto 30px;text-align:left}
+.final-quote{font-size:28px;color:#d4af37;font-family:"STKaiti",serif;text-align:center;margin:40px 0;letter-spacing:4px;text-shadow:0 0 20px #d4af37}
+.system-msg{text-align:center;color:#b8860b;font-size:14px;margin:20px 0;letter-spacing:3px;opacity:.7}
+.clue-popup{background:linear-gradient(135deg,rgba(139,0,0,.3),rgba(212,175,55,.15));border:1px solid #d4af37;padding:20px;margin:20px 0;border-radius:5px;animation:fadeIn .8s}
+.clue-popup-title{color:#d4af37;font-size:15px;letter-spacing:3px;margin-bottom:8px}
+.clue-popup-text{color:#fff5e0;font-size:17px;line-height:1.9}
+.attempt-counter{font-size:12px;color:#888;margin-top:8px;text-align:right}
+.sidebar-title{color:#d4af37;font-family:"STKaiti",serif;font-size:18px;letter-spacing:2px;margin-bottom:12px;border-bottom:1px solid #3a2a0a;padding-bottom:8px}
+.badges{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:25px}
+.badge{aspect-ratio:1;background:#1a0a05;border:1px solid #3a2a0a;display:flex;align-items:center;justify-content:center;font-size:18px;border-radius:3px;cursor:help;transition:all .2s}
+.badge.earned{background:linear-gradient(135deg,#8b0000,#d4af37);border-color:#d4af37;box-shadow:0 0 10px rgba(212,175,55,.4);color:#fff5e0}
+.keys{display:flex;gap:8px;justify-content:center;margin-bottom:25px}
+.key{width:40px;height:40px;border:1px solid #3a2a0a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;background:#1a0a05;transition:all .3s}
+.key.earned{background:linear-gradient(135deg,#d4af37,#b8860b);border-color:#d4af37;box-shadow:0 0 15px rgba(212,175,55,.6)}
+.notebook{max-height:250px;overflow-y:auto;background:rgba(0,0,0,.3);padding:12px;border-radius:3px;font-size:13px;line-height:1.7;color:#b8a87a}
+.clue-entry{margin-bottom:10px;padding:8px;border-left:2px solid #8b0000;background:rgba(139,0,0,.1)}
+.clue-entry-room{font-size:11px;color:#8b0000;letter-spacing:1px}
+
+/* 音效控制浮动 */
+.audio-ctrl{position:fixed;left:20px;bottom:20px;z-index:50;display:flex;gap:8px}
+.audio-btn{width:42px;height:42px;border-radius:50%;background:rgba(26,10,5,.9);border:1px solid #5a2a2a;color:#d4af37;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.audio-btn:hover{border-color:#d4af37;background:rgba(139,0,0,.4)}
+.audio-btn.active{background:#d4af37;color:#0a0a0a}
+
+/* PDF 打印样式 */
+#print-sheet{display:none}
+@media print{
+    body,html{height:auto;overflow:visible;background:#fff;color:#000}
+    #app,.audio-ctrl{display:none !important}
+    #print-sheet{display:block;color:#000;background:#fff;padding:0;font-family:"Songti SC","SimSun",serif;font-size:12pt;line-height:1.8}
+    .print-page{page-break-after:always;padding:30mm 20mm;min-height:240mm}
+    .print-page:last-child{page-break-after:auto}
+    .print-cover-logo{font-size:48pt;color:#8b0000;font-family:"STKaiti",serif;text-align:center;letter-spacing:8pt;margin-top:40mm}
+    .print-cover-sub{font-size:16pt;color:#333;text-align:center;letter-spacing:6pt;margin-top:10mm}
+    .print-cover-title{font-size:24pt;color:#000;text-align:center;margin-top:60mm;font-family:"STKaiti",serif;letter-spacing:4pt}
+    .print-cover-date{text-align:center;color:#666;margin-top:30mm;font-size:12pt}
+    .print-cover-ending{text-align:center;font-size:18pt;color:#8b0000;margin-top:20mm;font-family:"STKaiti",serif;letter-spacing:3pt}
+    .print-h2{font-size:20pt;color:#8b0000;font-family:"STKaiti",serif;letter-spacing:3pt;border-bottom:2pt solid #d4af37;padding-bottom:4mm;margin-bottom:8mm}
+    .print-badge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4mm;margin-bottom:10mm}
+    .print-badge-item{border:1pt solid #d4af37;padding:3mm;font-size:10pt;text-align:center;background:#fff8e8}
+    .print-badge-icon{font-size:16pt;margin-bottom:2mm}
+    .print-clue-item{padding:3mm 5mm;margin-bottom:3mm;border-left:3pt solid #8b0000;background:#f9f2e8}
+    .print-clue-rid{font-size:9pt;color:#8b0000;margin-bottom:2mm;letter-spacing:2pt}
+    .print-quote{font-size:16pt;color:#8b0000;text-align:center;font-family:"STKaiti",serif;margin:15mm 0;letter-spacing:3pt}
+    .print-signature{text-align:right;margin-top:30mm;font-size:10pt;color:#666;letter-spacing:2pt}
+}
+
+/* ======== Mobile responsive (auto-injected) ======== */
+@media (max-width:768px){
+  html,body{overflow-y:auto !important;overflow-x:hidden !important;height:auto !important;min-height:100vh;font-size:16px}
+  #app{flex-direction:column !important;height:auto !important;min-height:100vh;display:flex}
+  #stage{padding:18px 14px !important;overflow:visible !important;min-height:auto;flex:none !important;order:1}
+  #sidebar{width:100% !important;max-height:none !important;border-left:none !important;border-top:2px solid #3a2a0a !important;padding:16px 16px 90px 16px !important;box-shadow:none !important;order:2;overflow:visible !important}
+  .title-screen{min-height:calc(100vh - 20px);padding:20px 10px}
+  .title-logo{font-size:52px !important;letter-spacing:4px !important}
+  .title-sub{font-size:16px !important;letter-spacing:6px !important}
+  .title-desc{font-size:14px !important;padding:0 8px;line-height:1.9}
+  .btn-primary{padding:16px 36px !important;font-size:16px !important;letter-spacing:2px !important;width:auto;max-width:90%}
+  .btn-choice{padding:14px 16px !important;font-size:15px !important;text-align:left !important;line-height:1.7 !important}
+  .btn-ghost{padding:10px 16px !important;font-size:13px !important}
+  .scene-title{font-size:22px !important;letter-spacing:2px !important}
+  .scene-meta{font-size:12px !important}
+  .narration{padding:14px 16px !important;font-size:15px !important;line-height:1.9 !important;margin:14px 0 !important}
+  .guardian{padding:14px !important;margin:14px 0 !important}
+  .guardian-avatar{font-size:34px !important;margin-right:12px !important}
+  .guardian-name{font-size:16px !important}
+  .guardian-speech{font-size:15px !important;padding:6px 0 6px 42px !important;line-height:1.9 !important}
+  .guardian-speech::before{font-size:24px !important;left:12px !important}
+  .guardian-speech::after{font-size:24px !important}
+  .puzzle{padding:16px !important;margin:16px 0 !important}
+  .puzzle-q{font-size:16px !important;line-height:1.8 !important;margin-bottom:14px !important}
+  .puzzle-input{font-size:16px !important;padding:14px 12px !important}
+  .zones{grid-template-columns:1fr 1fr !important;gap:12px !important;max-width:100% !important}
+  .zone{padding:16px 10px !important}
+  .zone-icon{font-size:36px !important}
+  .zone-name{font-size:17px !important}
+  .zone-npc{font-size:12px !important}
+  .zone-progress{font-size:11px !important}
+  .multi-fill-grid{grid-template-columns:1fr !important;gap:6px 0 !important}
+  .multi-fill-label{text-align:left !important;font-weight:bold;font-size:14px !important;margin-top:6px}
+  .badges{grid-template-columns:repeat(10,1fr) !important;gap:4px !important}
+  .badge{font-size:14px !important}
+  .keys{gap:6px !important}
+  .key{width:34px !important;height:34px !important;font-size:16px !important}
+  .match-board{grid-template-columns:1fr 34px 1fr !important;gap:8px !important}
+  .match-cell{font-size:13px !important;padding:10px 6px !important;min-height:46px !important}
+  .audio-ctrl{left:auto !important;right:10px !important;bottom:10px !important;z-index:100}
+  .audio-btn{width:38px !important;height:38px !important;font-size:16px !important}
+  .header-bar{flex-direction:row !important;gap:8px !important;flex-wrap:wrap}
+  .sandbox-title{font-size:26px !important;letter-spacing:2px !important}
+  .sandbox-sub{font-size:13px !important}
+  .ending-screen h1{font-size:34px !important;letter-spacing:4px !important}
+  .ending-screen p{font-size:15px !important;padding:0 6px}
+  .final-quote{font-size:20px !important;letter-spacing:2px !important}
+  .room-item{padding:12px 14px !important}
+  .room-title-txt{font-size:15px !important}
+  .room-ch{font-size:12px !important}
+  .room-status{font-size:20px !important}
+  .clue-popup{padding:14px !important;margin:14px 0 !important}
+  .clue-popup-title{font-size:13px !important}
+  .clue-popup-text{font-size:14px !important;line-height:1.8 !important}
+  .mini-logo{font-size:14px !important;letter-spacing:2px !important}
+  .progress-bar{font-size:11px !important}
+  .sidebar-title{font-size:15px !important}
+  .notebook{max-height:180px !important}
+  .order-item{padding:12px 14px !important;font-size:14px !important}
+  .order-num{width:24px !important;height:24px !important;line-height:24px !important;font-size:12px !important}
+  .multi-opt{padding:10px 14px !important;font-size:14px !important}
+  .multi-check{width:18px !important;height:18px !important}
+  /* touch-friendly minimum tap size */
+  button, .btn-choice, .room-item, .zone, .order-item, .multi-opt, .match-cell{min-height:44px}
+}
+@media (max-width:420px){
+  .zones{grid-template-columns:1fr !important}
+  .title-logo{font-size:42px !important}
+  .badges{grid-template-columns:repeat(8,1fr) !important}
+}
+/* iPhone 安全区域 */
+@supports(padding:max(0px)){
+  #stage{padding-left:max(14px,env(safe-area-inset-left)) !important;padding-right:max(14px,env(safe-area-inset-right)) !important}
+}
+
+
+/* ======== Follow-up · 🎬 生活场景 ======== */
+.followup-box{background:rgba(10,5,5,.55);border:1px dashed #6a5a2a;padding:18px 20px;margin:22px 0;border-radius:4px}
+.followup-label{color:#b8860b;font-size:13px;letter-spacing:3px;margin-bottom:14px;font-family:"STKaiti",serif}
+.followup-topics{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.btn-topic{display:inline-block;background:rgba(20,35,15,.65);border:1px solid #7aaa5a;color:#9aca7a;padding:10px 18px;font-size:13px;cursor:pointer;border-radius:20px;font-family:inherit;transition:all .22s;letter-spacing:1px}
+.btn-topic:hover{background:#9aca7a;color:#0a0a0a;border-color:#9aca7a;transform:translateY(-1px)}
+.btn-topic.active{background:#9aca7a;color:#0a0a0a;border-color:#9aca7a;box-shadow:0 0 10px rgba(154,202,122,.4)}
+.btn-topic:active{transform:scale(.96)}
+.followup-display{animation:fadeIn .5s}
+.followup-display .guardian{margin-top:14px;border-color:#9aca7a !important;background:rgba(20,35,15,.25) !important}
+.followup-display .guardian-name::after{content:" · 生活补白";color:#b8ca7a;font-size:13px;letter-spacing:2px}
+@media (max-width:768px){.btn-topic{padding:10px 14px;font-size:12px;letter-spacing:0}.followup-box{padding:14px}}
+
+
+/* ───── 键盘焦点可视化 (a11y) ───── */
+[data-kbd],[role="button"]:not([aria-disabled="true"]){cursor:pointer}
+[aria-disabled="true"]{cursor:not-allowed}
+[data-kbd]:focus-visible,button:focus-visible,.btn-primary:focus-visible,.btn-ghost:focus-visible,.btn-choice:focus-visible,[role="button"]:focus-visible{outline:2px solid #d4af37;outline-offset:2px;box-shadow:0 0 0 4px rgba(212,175,55,.25)}
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+<meta name="theme-color" content="#c07030">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="201 英语">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+<script src="data/boot.js"></script>
+</head>
+<body>
+<div id="app">
+  <div id="stage" role="main" aria-live="polite"></div>
+  <div id="sidebar">
+    <div class="sidebar-title">🏛 归档处研究员</div>
+    <div style="font-size:13px;color:#888;margin-bottom:15px;line-height:1.6" id="progress-info">案件状态：调查中</div>
+    <div class="sidebar-title">🎖 徽章 <span id="badge-count" style="font-size:13px;color:#888">0/45</span></div>
+    <div class="badges" id="badges" aria-hidden="true"></div>
+    <div class="sidebar-title">🗝 主任之钥</div>
+    <div class="keys" id="keys" aria-hidden="true"></div>
+    <div class="sidebar-title">📖 手账本</div>
+    <div class="notebook" id="notebook"><div style="color:#888;font-style:italic;text-align:center;padding:10px">尚未发现线索...</div></div>
+    <div style="margin-top:15px">
+      <button class="btn-ghost" onclick="saveGame()" style="width:100%">💾 手动存档</button>
+      <button class="btn-ghost" onclick="exportPDF()" style="width:100%;margin-top:5px">📄 导出通关纪念册</button>
+      <button class="btn-ghost" onclick="resetGame()" style="width:100%;margin-top:5px;color:#ff6666;border-color:#ff6666">🗑 重新开始</button>
+    </div>
+  </div>
+</div>
+<div class="audio-ctrl">
+  <button class="audio-btn" id="btn-sfx" onclick="toggleSfx()" title="音效开关" aria-label="音效开关">🔊</button>
+  <button class="audio-btn" id="btn-bgm" onclick="toggleBgm()" title="BGM 开关" aria-label="背景音乐开关">🎵</button>
+</div>
+
+<!-- PDF 打印区 (只在打印时显示) -->
+<div id="print-sheet"></div>
+
+<script src="data/rooms.js"></script>
+<script src="data/engine.js"></script>
+<script src="data/game.js"></script>
+<script>
+const BGM_TRACKS={
+    title:{name:'藏心·求真',tempo:56,loopBeats:16,
+        drones:[{n:'A2',v:0.05,t:'sine'},{n:'E3',v:0.035,t:'sine'}],
+        melody:[{n:'A4',d:2,v:0.055,t:'triangle'},{n:'C5',d:1,v:0.05,t:'triangle'},{n:'E5',d:1,v:0.05,t:'triangle'},{n:'D5',d:2,v:0.045,t:'triangle'},{n:'C5',d:1,v:0.05,t:'triangle'},{n:'A4',d:1,v:0.055,t:'triangle'},{n:'Gs4',d:2,v:0.04,t:'triangle'},{n:'A4',d:3,v:0.055,t:'triangle'},{n:'REST',d:3,v:0,t:'sine'}]},
+    prologue:{name:'密锁熔金之夜',tempo:80,loopBeats:16,
+        drones:[{n:'A2',v:0.04,t:'sawtooth'}],
+        bass:[{n:'A1',d:2,v:0.055,t:'sine'},{n:'REST',d:2,v:0,t:'sine'},{n:'A1',d:2,v:0.055,t:'sine'},{n:'REST',d:2,v:0,t:'sine'},{n:'A1',d:2,v:0.055,t:'sine'},{n:'REST',d:1,v:0,t:'sine'},{n:'F2',d:1,v:0.05,t:'sine'},{n:'G2',d:1,v:0.05,t:'sine'},{n:'A1',d:1,v:0.055,t:'sine'},{n:'REST',d:2,v:0,t:'sine'}],
+        melody:[{n:'REST',d:4,v:0,t:'sine'},{n:'E5',d:2,v:0.04,t:'triangle'},{n:'F5',d:1,v:0.04,t:'triangle'},{n:'E5',d:1,v:0.04,t:'triangle'},{n:'D5',d:2,v:0.035,t:'triangle'},{n:'C5',d:2,v:0.035,t:'triangle'},{n:'B4',d:2,v:0.04,t:'triangle'},{n:'REST',d:2,v:0,t:'sine'}]},
+    sandbox:{name:'归档处·全景',tempo:68,loopBeats:16,
+        drones:[{n:'C3',v:0.045,t:'sine'},{n:'G3',v:0.03,t:'sine'}],
+        melody:[{n:'C5',d:2,v:0.05,t:'triangle'},{n:'D5',d:1,v:0.045,t:'triangle'},{n:'E5',d:1,v:0.045,t:'triangle'},{n:'G5',d:2,v:0.05,t:'triangle'},{n:'A5',d:2,v:0.05,t:'triangle'},{n:'G5',d:1,v:0.04,t:'triangle'},{n:'E5',d:1,v:0.045,t:'triangle'},{n:'D5',d:2,v:0.04,t:'triangle'},{n:'C5',d:4,v:0.055,t:'triangle'}]},
+    zone_W:{name:'词海塔·十四行',tempo:72,loopBeats:16,
+        drones:[{n:'E3',v:0.04,t:'sine'},{n:'B3',v:0.03,t:'sine'}],
+        melody:[{n:'E5',d:2,v:0.05,t:'triangle'},{n:'G5',d:1,v:0.045,t:'triangle'},{n:'Fs5',d:1,v:0.045,t:'triangle'},{n:'E5',d:2,v:0.05,t:'triangle'},{n:'B4',d:2,v:0.045,t:'triangle'},{n:'Cs5',d:1,v:0.045,t:'triangle'},{n:'B4',d:1,v:0.04,t:'triangle'},{n:'A4',d:2,v:0.045,t:'triangle'},{n:'E4',d:2,v:0.045,t:'triangle'},{n:'Fs4',d:2,v:0.04,t:'triangle'}]},
+    zone_G:{name:'语法殿·生成之树',tempo:64,loopBeats:16,
+        drones:[{n:'D3',v:0.04,t:'sine'},{n:'A3',v:0.03,t:'sine'}],
+        melody:[{n:'D5',d:2,v:0.05,t:'triangle'},{n:'F5',d:2,v:0.045,t:'triangle'},{n:'A5',d:2,v:0.05,t:'triangle'},{n:'D6',d:2,v:0.05,t:'triangle'},{n:'A5',d:1,v:0.045,t:'triangle'},{n:'F5',d:1,v:0.045,t:'triangle'},{n:'D5',d:2,v:0.05,t:'triangle'},{n:'A4',d:2,v:0.045,t:'triangle'},{n:'D5',d:2,v:0.05,t:'triangle'}]},
+    zone_C:{name:'完形廊·空白之填',tempo:88,loopBeats:16,
+        drones:[{n:'C3',v:0.035,t:'sine'}],
+        bass:[{n:'C2',d:1,v:0.04,t:'triangle'},{n:'REST',d:1,v:0,t:'sine'},{n:'G2',d:1,v:0.04,t:'triangle'},{n:'REST',d:1,v:0,t:'sine'},{n:'C2',d:1,v:0.04,t:'triangle'},{n:'REST',d:1,v:0,t:'sine'},{n:'F2',d:1,v:0.04,t:'triangle'},{n:'REST',d:1,v:0,t:'sine'},{n:'G2',d:1,v:0.04,t:'triangle'},{n:'REST',d:1,v:0,t:'sine'},{n:'C2',d:1,v:0.04,t:'triangle'},{n:'REST',d:1,v:0,t:'sine'},{n:'F2',d:1,v:0.04,t:'triangle'},{n:'REST',d:1,v:0,t:'sine'},{n:'G2',d:1,v:0.04,t:'triangle'},{n:'REST',d:1,v:0,t:'sine'}],
+        melody:[{n:'C5',d:2,v:0.045,t:'triangle'},{n:'E5',d:2,v:0.045,t:'triangle'},{n:'G5',d:2,v:0.05,t:'triangle'},{n:'E5',d:2,v:0.045,t:'triangle'},{n:'F5',d:2,v:0.045,t:'triangle'},{n:'D5',d:2,v:0.04,t:'triangle'},{n:'C5',d:4,v:0.05,t:'triangle'}]},
+    zone_R:{name:'阅读阁·书卷之回',tempo:60,loopBeats:16,
+        drones:[{n:'G2',v:0.045,t:'sine'},{n:'D3',v:0.03,t:'sine'}],
+        melody:[{n:'G4',d:2,v:0.05,t:'triangle'},{n:'B4',d:2,v:0.045,t:'triangle'},{n:'D5',d:2,v:0.05,t:'triangle'},{n:'G5',d:2,v:0.055,t:'triangle'},{n:'D5',d:1,v:0.045,t:'triangle'},{n:'B4',d:1,v:0.045,t:'triangle'},{n:'G4',d:2,v:0.05,t:'triangle'},{n:'A4',d:2,v:0.04,t:'triangle'},{n:'B4',d:2,v:0.045,t:'triangle'}]},
+    zone_T:{name:'翻译亭·信达雅',tempo:68,loopBeats:16,
+        drones:[{n:'F2',v:0.04,t:'sine'},{n:'C3',v:0.03,t:'sine'}],
+        melody:[{n:'F4',d:2,v:0.05,t:'triangle'},{n:'A4',d:2,v:0.045,t:'triangle'},{n:'C5',d:2,v:0.05,t:'triangle'},{n:'F5',d:2,v:0.055,t:'triangle'},{n:'C5',d:2,v:0.045,t:'triangle'},{n:'A4',d:2,v:0.045,t:'triangle'},{n:'G4',d:2,v:0.04,t:'triangle'},{n:'F4',d:2,v:0.05,t:'triangle'}]},
+    zone_E:{name:'写作厅·清白文字',tempo:76,loopBeats:16,
+        drones:[{n:'A2',v:0.04,t:'sine'},{n:'E3',v:0.03,t:'sine'}],
+        melody:[{n:'A4',d:1,v:0.045,t:'triangle'},{n:'C5',d:1,v:0.045,t:'triangle'},{n:'E5',d:2,v:0.05,t:'triangle'},{n:'A5',d:2,v:0.055,t:'triangle'},{n:'G5',d:1,v:0.045,t:'triangle'},{n:'E5',d:1,v:0.045,t:'triangle'},{n:'C5',d:2,v:0.045,t:'triangle'},{n:'A4',d:2,v:0.05,t:'triangle'},{n:'E4',d:2,v:0.04,t:'triangle'},{n:'A4',d:2,v:0.045,t:'triangle'}]},
+    deduction:{name:'推理厅·拼合真相',tempo:72,loopBeats:16,
+        drones:[{n:'B2',v:0.045,t:'sine'},{n:'Fs3',v:0.03,t:'sine'}],
+        melody:[{n:'B4',d:1,v:0.05,t:'triangle'},{n:'D5',d:1,v:0.05,t:'triangle'},{n:'Fs5',d:1,v:0.05,t:'triangle'},{n:'A5',d:1,v:0.05,t:'triangle'},{n:'Fs5',d:2,v:0.045,t:'triangle'},{n:'D5',d:2,v:0.045,t:'triangle'},{n:'B4',d:2,v:0.05,t:'triangle'},{n:'REST',d:2,v:0,t:'sine'},{n:'Fs5',d:1,v:0.045,t:'triangle'},{n:'Gs5',d:1,v:0.045,t:'triangle'},{n:'A5',d:2,v:0.05,t:'triangle'}]},
+    finale:{name:'终章·重铸玄卷',tempo:60,loopBeats:16,
+        drones:[{n:'G2',v:0.05,t:'sine'},{n:'D3',v:0.04,t:'sine'}],
+        melody:[{n:'G4',d:2,v:0.055,t:'triangle'},{n:'B4',d:2,v:0.05,t:'triangle'},{n:'D5',d:2,v:0.055,t:'triangle'},{n:'G5',d:2,v:0.06,t:'triangle'},{n:'D5',d:2,v:0.05,t:'triangle'},{n:'B4',d:2,v:0.05,t:'triangle'},{n:'G4',d:2,v:0.055,t:'triangle'},{n:'D4',d:2,v:0.05,t:'triangle'}]},
+    ending_A:{name:'守护者·遗憾',tempo:52,loopBeats:16,
+        drones:[{n:'A2',v:0.045,t:'sine'},{n:'E3',v:0.03,t:'sine'}],
+        melody:[{n:'A4',d:3,v:0.05,t:'triangle'},{n:'G4',d:2,v:0.045,t:'triangle'},{n:'F4',d:3,v:0.04,t:'triangle'},{n:'E4',d:4,v:0.045,t:'triangle'},{n:'D4',d:2,v:0.04,t:'triangle'},{n:'C4',d:2,v:0.04,t:'triangle'}]},
+    ending_B:{name:'传火者·光辉 ★',tempo:72,loopBeats:16,
+        drones:[{n:'C3',v:0.045,t:'sine'},{n:'G3',v:0.035,t:'sine'}],
+        melody:[{n:'C5',d:1,v:0.055,t:'triangle'},{n:'E5',d:1,v:0.055,t:'triangle'},{n:'G5',d:1,v:0.055,t:'triangle'},{n:'C6',d:2,v:0.06,t:'triangle'},{n:'E5',d:1,v:0.05,t:'triangle'},{n:'G5',d:1,v:0.05,t:'triangle'},{n:'A5',d:1,v:0.05,t:'triangle'},{n:'G5',d:2,v:0.05,t:'triangle'},{n:'F5',d:1,v:0.045,t:'triangle'},{n:'E5',d:1,v:0.045,t:'triangle'},{n:'D5',d:1,v:0.045,t:'triangle'},{n:'C5',d:2,v:0.055,t:'triangle'}]},
+    ending_C:{name:'辩证者·螺旋',tempo:64,loopBeats:16,
+        drones:[{n:'D3',v:0.04,t:'sine'},{n:'A3',v:0.03,t:'sine'}],
+        melody:[{n:'D4',d:1,v:0.045,t:'triangle'},{n:'F4',d:1,v:0.045,t:'triangle'},{n:'A4',d:1,v:0.05,t:'triangle'},{n:'C5',d:1,v:0.05,t:'triangle'},{n:'E5',d:2,v:0.055,t:'triangle'},{n:'D5',d:2,v:0.05,t:'triangle'},{n:'A4',d:2,v:0.045,t:'triangle'},{n:'F4',d:2,v:0.04,t:'triangle'},{n:'D4',d:4,v:0.045,t:'triangle'}]}
+};
+
+// ============ 游戏状态 ============
+let state={stage:'title',currentZone:null,currentRoom:null,badges:[],keys:[],clues:[],visited:{},ending:null,flags:{},startDate:null,puzzleFirstTry:{},deduction:null};
+
+// ============ 45 房间数据 (201 英语一 · 全覆盖) ============
+
+const FOLLOWUPS={
+W1:[{topic:`🎬 address 不是地址是"应对"`,reply:`address 考研阅读最常见意思是"处理 / 应对"（动词）·不是"地址"。例："The government must address the crisis."（政府必须应对危机·不是"寄信给危机"）。同类熟词僻义：contend（争论 → 断言）·command（命令 → 赢得·如 command respect）。`}],
+W2:[{topic:`🎬 phenomena 是复数·phenomenons 错`,reply:`phenomenon 的复数是 phenomena（不是 phenomenons）——源自希腊语。同类特殊复数：criterion → criteria·datum → data·medium → media。考研语法题高频："This phenomenon are"——错！phenomenon 是单数·动词用 is。`}],
+W3:[{topic:`🎬 词根 un+evit+able`,reply:`inevitable = un+evit+able = "不能 + 避免 + 的"——记词根就不用背单词。同类形容词：inseparable（不可分）·immovable（不可移）·impossible（不可能）。考研高频同义词互换——背一个 = 背三个。`}],
+W4:[{topic:`🎬 50 个学术词块·作文上档次`,reply:`with regard to 比 about / on 更正式。同类："in terms of"（就...而言）·"by virtue of"（凭借）·"in light of"（鉴于）·"on the grounds of"（基于）。建议：背 50 个学术词块·作文立马上档次。`}],
+W5:[{topic:`🎬 court 不只是法庭/球场`,reply:`court 熟词僻义——你以为是"法庭 / 球场"·考研真题考"追求 / 讨好"（动词）。类似：entertain（不只娱乐·还有"考虑想法"）·figure（不只数字·还有"人物"）·charge（不只充电·还有"指控 / 收费 / 冲锋"）。`}],
+W6:[{topic:`🎬 5500 词·70% 靠拆`,reply:`dis-（相反）+ approve（赞成）= disapprove。拆词根能背 1000+ 词：pre-（前）/ post-（后）/ anti-（反）/ con-（一起）/ trans-（跨）。考研 5500 词·70% 可靠词根词缀拆解。`}],
+W7:[{topic:`🎬 affect 和 effect 的四种用法`,reply:`affect 多作动词"影响"（The rain affected the crops）·effect 多作名词"效果"（The effect was amazing）。但 effect 也可作动词"实现、产生"（effect a change）·affect 也可作名词"情感"（心理学）。考研经常考互换陷阱。`}],
+W8:[{topic:`🎬 carry out = implement`,reply:`carry out = "实施 / 执行" = implement / perform——比 do 更正式。同类：come up with（想出）·account for（解释 / 占比）·cope with（应对）·figure out（弄清）。背 100 个短语动词·阅读和完形双赢。`}],
+W9:[{topic:`🎬 however 后面 80% 是主旨`,reply:`however 是"转折"的招牌词·阅读转折题永远看 however 后面那句。同类：nevertheless·nonetheless·yet·still·on the contrary。转折之后往往是作者真正观点——考研主旨题 80% 在转折后。`}],
+W10:[{topic:`🎬 principal 和 principle 一字之差`,reply:`principal（校长 / 本金 / 主要的）·principle（原则）——一字之差词性意义都变。principal 形容词"主要的"（the principal cause）·名词"校长、本金"。principle 只能是名词"原则"。同类：complement（补充）vs compliment（赞美）·dessert（甜品）vs desert（沙漠）。`}],
+G1:[{topic:`🎬 关掉从句滤镜找主干`,reply:`主干 = 主 + 谓 + 宾 / 表——再长再复杂也逃不过这三要素。真题例句 "What we once took for granted"——主干只有 "we took it for granted"·"What" 是 "it" 的前置（引导宾语从句作主语）。读长难句第一步：关掉从句滤镜·找主干。`}],
+G2:[{topic:`🎬 My brother·唯一那个`,reply:`"The book that I bought" ——that 引导定语从句修饰 book。非限定（带逗号）表补充："My brother, who lives in Beijing, is a doctor."——"我哥（唯一那个）是医生·他在北京"。限定不带逗号·识别是关键。`}],
+G3:[{topic:`🎬 7 大状语从句·口诀记死`,reply:`"Although he was tired, he kept working." —— Although 引导让步状语。时间 when / while·原因 because / since·目的 so that·结果 so...that·条件 if / unless·让步 although / even though·比较 than / as...as。7 大类·口诀记死。`}],
+G4:[{topic:`🎬 that 和 what 考研最爱`,reply:`"What he said is true." —— What he said 作主语·就是主语从句。四种：主语 / 宾语 / 表语 / 同位语。引导词 that / whether / if / what / who / when / where——考研真题最爱考 that 和 what 的区分。`}],
+G5:[{topic:`🎬 非谓语三兄弟`,reply:`"Having finished the work, he left." —— Having finished 是现在分词完成式作状语·表"在离开之前已做完"。非谓语三兄弟：-ing（现在分词 / 动名词）·-ed（过去分词·被动或完成）·to do（不定式·目的或未来）。`}],
+G6:[{topic:`🎬 否定词前置·部分倒装`,reply:`"Never have I seen such beauty." —— 否定副词 Never 句首·引发部分倒装（助动词 have 提前）。完全倒装："Here comes the bus."（整个谓语前置）。考研"部分倒装 vs 正常语序"90% 能猜对——看句首是不是否定副词。`}],
+G7:[{topic:`🎬 虚拟三套时态·不能混`,reply:`If I were you, I would go.——与现在事实相反（were·would do）。If I had studied harder——与过去相反（had+done·would have done）。If I were to go tomorrow——与将来相反（were to do·较弱可能性）。三套时态·不能混。`}],
+G8:[{topic:`🎬 分号省略动词`,reply:`"He likes tea; she, coffee." —— 逗号代替了重复的 likes ——这是省略结构。并列句 and / but / or / so / for / yet / nor 连接两个独立句。阅读理解省略处还原出全句·是读长难句的"外挂"。`}],
+C1:[{topic:`🎬 10 分 / 20 题·最冷门但吃词汇`,reply:`完形填空 10 分 · 20 题 · 每题 0.5 分 · 约 240-280 词短文 · 约 60 分钟。考研最"冷门"但最吃词汇搭配和逻辑的一道题·很多人最后对三分之一。策略：跳过最难的·先做主题词容易的。`}],
+C2:[{topic:`🎬 6-8 个空是逻辑连接词`,reply:`therefore / however / meanwhile / otherwise / moreover —— 完形中约 6-8 个空是逻辑连接词。策略：先读整段把握逻辑·再填空词·语义对了答案就对。`}],
+C3:[{topic:`🎬 背搭配 200 个·稳 4-5 分`,reply:`take into consideration·account for·be subject to —— 完形里 30% 的空是固定搭配。这些没有道理可讲·背就完事了。考前两周冲刺搭配 200 个·完形稳 4-5 分。`}],
+C4:[{topic:`🎬 argue / claim / insist / hold`,reply:`完形中"主题词"贯穿全文多次出现·同义复现（如 argue / claim / contend / insist / hold）。看到空就找上下文同类词替换——最快也最准的策略。`}],
+C5:[{topic:`🎬 过去进行时的标志句型`,reply:`"When he ___ the room, the phone rang." —— 过去进行时 was entering（强调动作正在进行时另一动作发生）。考研时态题约占 3-5 个·主要考过去时态（一般·进行·完成）。`}],
+R1:[{topic:`🎬 首末段的主题句`,reply:`主旨题 80% 答案在首段和末段的"主题句"——通常是段首或段尾一句总括性话。考研阅读 Part A 四篇·每篇 5 题·主旨题往往是最后一题。看完全文回头答·不要一开始就做。`}],
+R2:[{topic:`🎬 关键词定位·同义改写`,reply:`细节题用"关键词定位"——题干找一个名词或专有词·回原文搜索那个词所在句及上下文·对比选项。正确选项往往是原文的"同义改写"（如原文 increase·选项 rise）——不是原样照抄。`}],
+R3:[{topic:`🎬 在上下文里找同反义`,reply:`词义题靠上下文·不靠背单词（很多是"熟词僻义"或"专有用法"）。策略：原文找到那词·看前后句有无"解释 / 同义 / 反义 / 例子"——推断出来再对选项。`}],
+R4:[{topic:`🎬 一步之遥·多走一步就错`,reply:`推理题正确选项：有原文依据 + 稍向前一步 ≠ 原文复述。陷阱：① 过度推理（走太远）·② 常识判断（无原文依据）·③ 无中生有（原文没提）。一步之遥·多走一步就错。`}],
+R5:[{topic:`🎬 obsessed / fanatic 基本排除`,reply:`考研阅读 Part A 中作者态度常是"批判性但客观"（critical / objective）——学术文章不会出现"激烈反对 / 狂热支持"这种极端。选项里有 obsessed / fanatic / contemptuous 基本排除。`}],
+R6:[{topic:`🎬 不是例子本身·是论点`,reply:`例证题：文章给一个例子·问这个例子是为了说明什么。答案不是"例子本身"·而是例子"前后文"的论点句。策略：不要盯着例子细节·往前往后找观点句。`}],
+R7:[{topic:`🎬 指代词 + 词汇复现`,reply:`新题型 7 选 5·备选 7 句选 5 句填入 5 空。线索：① 段落连贯性（前后逻辑）·② 指代词（this / these / it）·③ 词汇复现（同一主题词反复出现）。建议先排除最明显的 2 句·再细磨剩下 5 个空。`}],
+R8:[{topic:`🎬 首段定位·满盘皆输`,reply:`段落排序——先确定首段（看哪段开头没有 however / thus / but 这种承接词）·再跟着逻辑词和指代链串起来。首段一错·满盘皆输——这是经验之一。`}],
+R9:[{topic:`🎬 首末句 + 关键词`,reply:`小标题匹配——关注段落首末句（信息密度最高）+ 关键词（反复出现的词）。不要读完整段·看了首末句能选出就直接选·时间最宝贵。`}],
+R10:[{topic:`🎬 四大干扰项模式`,reply:`考研阅读四大干扰项：偷换概念（关键词替换）·过度推理（走太远）·无中生有（原文没提）·正反颠倒（观点反了）。熟悉这四种模式·选答时一眼识破。`}],
+T1:[{topic:`🎬 信达·不求雅`,reply:`四大策略：直译（按字面）·意译（按意思）·增译（补充逻辑词·使中文通顺）·减译（省略英语里的代词冠词）。考研翻译标准是"信·达"·不求"雅"。每句 2-3 个采分点·得分节点清晰。`}],
+T2:[{topic:`🎬 超过 10 词别硬前置`,reply:`长定语从句——短的前置"……的"（a man who is rich = 一个有钱的人）·长的后置成独立短句（a man who lives in a remote village and raises sheep = 一个人·他住在偏远村子·以牧羊为生）。超过 10 词就别硬前置。`}],
+T3:[{topic:`🎬 英多被动·中多主动`,reply:`英多被动·中多主动。"It is said that..." → 译"据说..."（主动）。"Mistakes were made" → 译"出现了错误"·不翻译成"错误被犯下"（中文不这么说）。翻译时要"去被动化"。`}],
+T4:[{topic:`🎬 别从头到尾译成"英文中文"`,reply:`长难句翻译第一步——找主干（主 + 谓 + 宾）。其他成分（从句 / 插入语 / 分词）当"注脚"来翻。先把主干译通·再"挂"上其他成分。不要从头到尾按顺序译——会翻译成"英文中文"。`}],
+T5:[{topic:`🎬 约定俗成·不自创`,reply:`人名地名按"约定俗成"——Shakespeare = 莎士比亚 / London = 伦敦 / Washington = 华盛顿。新出现的用音译（但考研很少考）。不要自创译法——即便原文 Charles 也译"查尔斯"不是"恰尔斯"。`}],
+T6:[{topic:`🎬 5 句 10 分·12-15 采分点`,reply:`考研翻译 5 句·每句 2 分·共 10 分。每句 2-3 个"采分点"——通常是某个从句、某个重要词组、某个难点语法。总 12-15 个采分点。建议每句拆 2-3 个短句·重点翻准采分点。`}],
+E1:[{topic:`🎬 书信 6-7 分的稳妥模板`,reply:`考研小作文多是应用文·100 词左右。建议信开头："I am writing to offer some suggestions on..."——这是阅卷老师最熟悉的模板。字迹清楚 + 无语法错 = 6-7 分基本稳。`}],
+E2:[{topic:`🎬 通知格式 = 不扣分但不减`,reply:`通知格式：标题（NOTICE·居中·可加日期）+ 主体（3-4 句说清时间 / 地点 / 事件）+ 署名（Yours sincerely·XX 委员会）+ 日期（右下）。格式错了不扣分·但让阅卷老师皱眉——谁也不想在皱眉状态下打分。`}],
+E3:[{topic:`🎬 2013-2019 年连考 7 年`,reply:`图画作文三段式：描述图画 + 揭示寓意 + 评论 / 展望。图画作文 2013-2019 连续 7 年·2020 年改图表后又于 2024 恢复。每段 60-80 词·总 160-200 词。`}],
+E4:[{topic:`🎬 别抄题目·改写关键数据`,reply:`图表作文第一段：概括总体趋势（上升 / 下降 / 波动）+ 最大最小值。不要抄题目——改写为自己的话。常用句：As can be seen from the chart... / The chart shows a striking trend that...`}],
+E5:[{topic:`🎬 一天 100 份审美疲劳`,reply:`"It is universally acknowledged that..."（众所周知）——这种套话阅卷老师一天看 100 份·审美疲劳会扣印象分。建议：A growing number of people tend to believe that... 或者直接开门见山。模板是脚手架·不是作品。`}],
+E6:[{topic:`🎬 替换 5 个常用词·印象分立升`,reply:`important 的高级替换：significant / crucial / vital / pivotal / paramount / essential。happy：delighted / thrilled / elated / ecstatic。many：a multitude of / a plethora of / numerous。作文替换 5 个·印象分立刻上一档。`}]
+};
+// ============ 存档标识 (behaviour in data/game.js) ============
+const SAVE_SUBJECT='201';
+
+// ============ 渲染路由 ============
+function renderStage(){
+    const s=state.stage;
+    if(s==='title') renderTitle();
+    else if(s==='prologue') renderPrologue();
+    else if(s==='sandbox') renderSandbox();
+    else if(s==='zone') renderZone();
+    else if(s==='room') renderRoom();
+    else if(s==='deduction') renderDeduction();
+    else if(s==='finale') renderFinale();
+    else if(s==='ending') renderEnding();
+    applyBgm();
+}
+
+function renderTitle(){
+    document.getElementById('stage').innerHTML=`
+    <div class="title-screen">
+        <div class="title-logo">201·漪兰·求真</div>
+        <div class="title-sub">失 窃 档 案 · 千 卷 之 书 之 谜</div>
+        <div class="title-desc">
+        北京大学 201 英语阅卷组数据归档处<br>
+        一卷镌刻 45 枚考研英语一颗粒化知识的《千卷之书·Millennium Codex》 不翼而飞<br>
+        六 扉 封 蜡 尽 数 熔 解<br><br>
+        馆长给你们 9 天 9 夜 —— 请务必 复原真相<br>
+        <span style="color:#888;font-size:13px">（本游戏含 45 个章节知识谜题，覆盖词汇·语法·完形·阅读·翻译·写作全部考研英语一 201 要点）</span>
+        </div>
+        <button class="btn-primary" onclick="startGame()">进 入 归 档 处</button>
+        ${hasSave()?'<div style="margin-top:20px"><button class="btn-ghost" onclick="continueGame()">继续上次进度</button></div>':''}
+        <div style="margin-top:40px;color:#666;font-size:12px;letter-spacing:2px">
+        提示：左下角可开启 音效 / BGM · 右侧边栏可存档 / 导出通关纪念册
+        </div>
+    </div>`;
+}
+
+function startGame(){
+    state.stage='prologue';state.flags.prologueStep=0;
+    if(!state.startDate) state.startDate=new Date().toISOString();
+    sfxDing();renderStage();
+}
+function continueGame(){if(loadGame()){renderStage();renderSidebar()}}
+
+const PROLOGUE=[
+    {emoji:'🌫',n:'旁白',speech:'2030 年 4 月 3 日 · 凌晨 4:45（for forty-five minutes——完形填空的限时）。北京大学燕南园 · 201 英语阅卷组 · 地下三层"千日之庭"——六扉封蜡熔解之夜。'},
+    {emoji:'🔔',n:'旁白',speech:'值班管理员老桂听见一段 TTS 朗读——竟是 2005 年考研英语一阅读原文。朗读结束的刹那，六扉金铜封蜡如 melting wax 般熔去，冷却后凝成六块扭曲的 1066°C 金疙瘩。千日之庭的石台空了——镌刻 45 枚中世纪羊皮手抄的千卷之书·Millennium Codex——不翼而飞。'},
+    {emoji:'📖',n:'词汇·老莎（Shakespeare）',speech:'"To be, or not to be——that is not the question. 真正的问题是：这些词，到底属于谁？"'},
+    {emoji:'📐',n:'语法·老钦（Chomsky）',speech:'"Deep structure. Surface structure. 没有严格生成规则的散播·就是语言的塌陷。"'},
+    {emoji:'🔍',n:'完形·老米（Collins）',speech:'"complete the passage——补全文章的，从来都是语境。语境也会补全这场失窃。"'},
+    {emoji:'📚',n:'阅读·老培（Bacon）',speech:'"Reading maketh a full man. 满是此话——充盈之人。你们读完 45 房·即成一名充盈之人。"'},
+    {emoji:'📝',n:'翻译·老杨（杨宪益）',speech:'"信·达·雅。今夜真相——信则见形·达则见势·雅则见心。"'},
+    {emoji:'✍️',n:'写作·老奥（Orwell）',speech:'"Good prose is like a windowpane. 要看清这桩窃案·先把窗擦干净。"'},
+    {emoji:'👩‍🏫',n:'馆长·石漪兰（Rosetta）',speech:'"研究员们·我给你们 9 天 9 夜。归档处共分 6 大展区：词海塔·语法殿·完形廊·阅读阁·翻译亭·写作厅。每区一位主任守护。不得强迫 NPC 交代；每到一处留下徽章；终章之门只对集齐 45 枚徽章者开启。9 天未复原千卷之书·秋季 201 阅卷体系瘫痪一季。"'},
+    {emoji:'📓',n:'旁白',speech:'（馆长递来"研究员手账本"——封面烫金"漪兰·求真"。末页非馆长笔迹：「馆长也可能说谎。Take it cum grano salis. 请带着怀疑出发。」）'}
+];
+
+function renderPrologue(){
+    const step=state.flags.prologueStep||0;
+    if(step>=PROLOGUE.length){state.stage='sandbox';saveGame(true);renderStage();return}
+    const p=PROLOGUE[step];
+    document.getElementById('stage').innerHTML=`
+    <div class="header-bar">
+        <div class="mini-logo">序幕 · 密锁熔金之夜</div>
+        <div class="progress-bar">${step+1}/${PROLOGUE.length}</div>
+    </div>
+    <div class="guardian">
+        <div class="guardian-header">
+            <div class="guardian-avatar">${p.emoji}</div>
+            <div class="guardian-name">${p.n}</div>
+        </div>
+        <div class="guardian-speech">${p.speech}</div>
+    </div>
+    <div style="text-align:center;margin-top:40px">
+        <button class="btn-primary" onclick="prologueNext()">${step<PROLOGUE.length-1?'继 续':'进 入 沙 盒'}</button>
+    </div>`;
+}
+function prologueNext(){state.flags.prologueStep++;sfxSelect();renderStage()}
+
+function renderSandbox(){
+    const completedZones=Object.keys(ZONES).filter(z=>{
+        const n=ZONES[z].count;let done=0;
+        for(let i=1;i<=n;i++) if(state.visited[z+i]) done++;
+        return done===n;
+    });
+    const allDone=completedZones.length===6;
+    document.getElementById('stage').innerHTML=`
+    <div class="header-bar">
+        <div class="mini-logo">沙 盒 · 5 大 展 区</div>
+        <div class="progress-bar">第 ${Math.min(completedZones.length+1,6)} 幕 / 6</div>
+    </div>
+    <div class="sandbox">
+        <div class="sandbox-title">归档处 · 全景地图</div>
+        <div class="sandbox-sub">选择任意展区进入 · 收集 45 枚徽章 · 解锁终章</div>
+        <div class="zones">
+            ${Object.keys(ZONES).map(z=>{
+                const zn=ZONES[z];let done=0;
+                for(let i=1;i<=zn.count;i++) if(state.visited[z+i]) done++;
+                const cls=done===zn.count?'zone done':'zone';
+                return `<div class="${cls}" role="button" tabindex="0" data-kbd onclick="enterZone('${z}')" aria-label="进入 ${zn.name} 展区，${done}/${zn.count} 徽章">
+                    <span class="zone-icon">${zn.icon}</span>
+                    <div class="zone-name">${zn.name}</div>
+                    <div class="zone-npc">${zn.npc}</div>
+                    <div class="zone-progress">${zn.mod} · ${done}/${zn.count} 徽章</div>
+                </div>`;
+            }).join('')}
+        </div>
+        ${allDone?`<div style="text-align:center;margin-top:50px;animation:glowPulse 2s infinite">
+            ${state.deduction?`<button class="btn-primary" onclick="enterFinale()" style="font-size:22px;padding:18px 70px">☆ 终 章 · 馆 长 密 室 ☆</button>
+            <div style="margin-top:15px;color:#d4af37;font-size:14px;letter-spacing:3px">推理厅已定稿 · 评级 ${computeGrade().rankLabel} · 馆长等你揭晓真相</div>`:`<button class="btn-primary" onclick="enterDeduction()" style="font-size:22px;padding:18px 70px">☆ 推 理 厅 · 拼 合 真 相 ☆</button>
+            <div style="margin-top:15px;color:#d4af37;font-size:14px;letter-spacing:3px">45 徽章集齐 · 6 把主任之钥在手 · 先凭手账本回答 9 问·再进终章</div>`}
+        </div>`:`<div class="system-msg">⚜ 剩余 ${6-completedZones.length} 大展区未通关 ⚜</div>`}
+    </div>`;
+}
+
+function enterZone(z){state.currentZone=z;state.stage='zone';sfxSelect();renderStage()}
+
+function renderZone(){
+    const z=state.currentZone;const zn=ZONES[z];
+    const rooms=[];
+    for(let i=1;i<=zn.count;i++){
+        const rid=z+i;const r=ROOMS[rid];
+        const done=!!state.visited[rid];
+        const prevDone=i===1||state.visited[z+(i-1)];
+        rooms.push({rid,r,done,locked:!prevDone&&!done});
+    }
+    const allDone=rooms.every(x=>x.done);
+    document.getElementById('stage').innerHTML=`
+    <div class="header-bar">
+        <div class="mini-logo">${zn.icon} ${zn.name} · ${zn.npc}</div>
+        <button class="btn-ghost" onclick="state.stage='sandbox';renderStage()">← 返回沙盒</button>
+    </div>
+    <div class="sandbox-sub">${zn.mod} · 共 ${zn.count} 房间 · 按顺序解锁</div>
+    <div class="room-list">
+        ${rooms.map(x=>{
+            const cls=x.done?'room-item done':(x.locked?'room-item locked':'room-item');
+            const handler=x.locked?'':`onclick="enterRoom('${x.rid}')"`;
+            const status=x.done?'✓':(x.locked?'🔒':'→');
+            const aria=`${x.rid} ${x.r.title}，${x.done?'已完成':(x.locked?'未解锁':'未完成')}`;
+            return `<div class="${cls}" role="button" tabindex="${x.locked?-1:0}" ${x.locked?'aria-disabled="true"':'data-kbd'} ${handler} aria-label="${aria}">
+                <div class="room-label">
+                    <div class="room-title-txt">${x.rid} · ${x.r.title}</div>
+                    <div class="room-ch">${x.r.ch}</div>
+                </div>
+                <div class="room-status" aria-hidden="true">${status}</div>
+            </div>`;
+        }).join('')}
+    </div>
+    ${allDone?`<div style="text-align:center;margin-top:30px">
+        <div class="clue-popup">
+            <div class="clue-popup-title">★ ${zn.name} 已通关</div>
+            <div class="clue-popup-text">你获得了 <strong style="color:#d4af37">${zn.key}</strong> —— 这是打开终章重铸炉的 5 把钥匙之一。</div>
+        </div>
+    </div>`:''}`;
+}
+
+function enterRoom(rid){
+    state.currentRoom=rid;state.stage='room';
+    state.flags.attempts=0;state.flags.roomStep='intro';
+    state.flags.puzzleState={};
+    sfxSelect();renderStage();
+}
+
+function renderRoom(){
+    const rid=state.currentRoom;const r=ROOMS[rid];const step=state.flags.roomStep;
+    const zn=ZONES[r.zone];
+    let content='';
+    if(step==='intro'){
+        const hasTeach=!!r.teachingMoment;
+        content=`
+        <div class="scene-title">${r.title}</div>
+        <div class="scene-meta">${zn.name} · ${r.ch}</div>
+        <div class="narration">${r.scene}</div>
+        <div class="guardian">
+            <div class="guardian-header">
+                <div class="guardian-avatar">${r.guardian.emoji}</div>
+                <div class="guardian-name">${r.guardian.name}</div>
+            </div>
+            <div class="guardian-speech">${r.guardian.speech}</div>
+        </div>
+        <div style="text-align:center;margin-top:30px">
+            ${hasTeach?`<button class="btn-teaching" onclick="roomNext('learn')">先 · 听 我 讲 这 个 知 识 点</button><br><button class="btn-ghost" style="margin-top:10px" onclick="roomNext('puzzle')">（直接挑战）</button>`:`<button class="btn-primary" onclick="roomNext('puzzle')">接 受 试 炼</button>`}
+        </div>`;
+    }else if(step==='learn'){
+        const tm=r.teachingMoment;
+        const bodyHtml=tm.body.replace(/\n/g,'<br>');
+        content=`
+        <div class="scene-title">${r.title} · 先 · 沉 浸</div>
+        <div class="scene-meta">${zn.name} · ${r.ch}</div>
+        <div class="teaching">
+            <div class="teaching-label">◇ 先 感 受 一 下 这 个 知 识 点 在 说 什 么 ◇</div>
+            <div class="teaching-body">${bodyHtml}</div>
+            ${tm.core?`<div class="teaching-core">${tm.core}</div>`:''}
+        </div>
+        <div style="text-align:center;margin-top:30px">
+            <button class="btn-primary" onclick="roomNext('puzzle')">现 在 · 我 理 解 了 → 接 受 试 炼</button>
+        </div>`;
+    }else if(step==='puzzle'){
+        content=renderPuzzle(r);
+    }else if(step==='after'){
+        content=`
+        <div class="scene-title">${r.title} · 真 相</div>
+        <div class="narration">${r.after}</div>
+        <div class="clue-popup">
+            <div class="clue-popup-title">✦ 获得徽章</div>
+            <div class="clue-popup-text">🎖 <strong style="color:#d4af37">${r.badge}</strong> 已收入手账本。</div>
+        </div>
+        ${r.clue?`<div class="clue-popup">
+            <div class="clue-popup-title">✧ 线索发现</div>
+            <div class="clue-popup-text">${r.clue}</div>
+        </div>`:''}
+        <div style="text-align:center;margin-top:30px">
+            <button class="btn-primary" onclick="leaveRoom()">离 开 · 返 回 ${zn.name}</button>
+        </div>`;
+    }
+    document.getElementById('stage').innerHTML=`
+    <div class="header-bar">
+        <div class="mini-logo">${zn.icon} ${rid} · ${r.title}</div>
+        <button class="btn-ghost" onclick="state.stage='zone';renderStage()">← 返回 ${zn.name}</button>
+    </div>
+    ${content}`;
+}
+
+function roomNext(next){state.flags.roomStep=next;state.flags.puzzleState={};renderStage()}
+
+// ============ 谜题渲染 (支持 5 种类型) ============
+function renderPuzzle(r){
+    const p=r.puzzle;
+    const attempts=state.flags.attempts||0;
+    let ui='';
+    if(p.type==='fill'){
+        ui=`
+        <div class="puzzle-q">${p.q.replace(/\n/g,'<br>')}</div>
+        <input type="text" class="puzzle-input" id="user-answer" placeholder="输入你的答案..." onkeydown="if(event.key==='Enter')submitFill()">
+        ${p.hint?`<div class="puzzle-hint">💡 提示：${p.hint}</div>`:''}
+        <div style="margin-top:15px;text-align:right">
+            <button class="btn-ghost" onclick="submitFill()">提 交 答 案</button>
+        </div>`;
+    }else if(p.type==='choice'){
+        ui=`
+        <div class="puzzle-q">${p.q.replace(/\n/g,'<br>')}</div>
+        <div>${p.options.map((o,i)=>`<button class="btn-choice" onclick="submitChoice(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}</div>
+        ${p.hint?`<div class="puzzle-hint">💡 提示：${p.hint}</div>`:''}`;
+    }else if(p.type==='multifill'){
+        const vals=state.flags.puzzleState.vals||p.fields.map(()=>'');
+        ui=`
+        <div class="puzzle-q">${p.q.replace(/\n/g,'<br>')}</div>
+        <div class="multi-fill-grid">
+            ${p.fields.map((f,i)=>`
+                <div class="multi-fill-label">${f.label}</div>
+                <input type="text" class="puzzle-input" id="mf-${i}" value="${vals[i]}" placeholder="...">
+            `).join('')}
+        </div>
+        ${p.hint?`<div class="puzzle-hint">💡 提示：${p.hint}</div>`:''}
+        <div style="margin-top:15px;text-align:right">
+            <button class="btn-ghost" onclick="submitMultifill()">提 交 答 案</button>
+        </div>`;
+    }else if(p.type==='multi'){
+        if(!state.flags.puzzleState.sel) state.flags.puzzleState.sel=[];
+        const sel=state.flags.puzzleState.sel;
+        ui=`
+        <div class="puzzle-q">${p.q.replace(/\n/g,'<br>')}</div>
+        <div class="multi-opts">
+            ${p.options.map((o,i)=>`
+                <div class="multi-opt ${sel.includes(i)?'checked':''}" onclick="toggleMulti(${i})">
+                    <div class="multi-check">${sel.includes(i)?'✓':''}</div>
+                    <div>${o}</div>
+                </div>
+            `).join('')}
+        </div>
+        ${p.hint?`<div class="puzzle-hint">💡 提示：${p.hint}</div>`:''}
+        <div style="margin-top:15px;text-align:right">
+            <button class="btn-ghost" onclick="submitMulti()">提 交 答 案 (已选 ${sel.length} 项)</button>
+        </div>`;
+    }else if(p.type==='order'){
+        if(!state.flags.puzzleState.order){
+            // 初始化为乱序
+            const n=p.items.length;
+            const arr=Array.from({length:n},(_,i)=>i);
+            for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}
+            // 确保不是正序
+            if(arr.every((v,i)=>v===i)) {[arr[0],arr[1]]=[arr[1],arr[0]]}
+            state.flags.puzzleState.order=arr;
+            state.flags.puzzleState.sel=-1;
+        }
+        const order=state.flags.puzzleState.order;
+        const selIdx=state.flags.puzzleState.sel;
+        ui=`
+        <div class="puzzle-q">${p.q.replace(/\n/g,'<br>')}</div>
+        <div style="color:#888;font-size:14px;margin-bottom:10px">💡 点击两项可交换位置（第一次点击选中，第二次点击交换）</div>
+        <ul class="order-list">
+            ${order.map((itemIdx,pos)=>`
+                <li class="order-item ${selIdx===pos?'selected':''}" onclick="orderClick(${pos})">
+                    <span class="order-num">${pos+1}</span>
+                    <span>${p.items[itemIdx]}</span>
+                </li>
+            `).join('')}
+        </ul>
+        ${p.hint?`<div class="puzzle-hint">💡 提示：${p.hint}</div>`:''}
+        <div style="margin-top:15px;text-align:right">
+            <button class="btn-ghost" onclick="submitOrder()">提 交 答 案</button>
+        </div>`;
+    }else if(p.type==='match'){
+        if(!state.flags.puzzleState.pairs){
+            state.flags.puzzleState.pairs=[];
+            state.flags.puzzleState.activeL=-1;
+            // 右侧乱序
+            const n=p.right.length;const arr=Array.from({length:n},(_,i)=>i);
+            for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}
+            state.flags.puzzleState.rightOrder=arr;
+        }
+        const ps=state.flags.puzzleState.pairs;
+        const actL=state.flags.puzzleState.activeL;
+        const rOrd=state.flags.puzzleState.rightOrder;
+        const leftUsed=ps.map(x=>x[0]);
+        const rightUsed=ps.map(x=>x[1]);
+        ui=`
+        <div class="puzzle-q">${p.q.replace(/\n/g,'<br>')}</div>
+        <div style="color:#888;font-size:14px;margin-bottom:10px">💡 依次点击左侧一项和右侧一项进行配对（已配对的项不可重复选择）</div>
+        <div class="match-board">
+            <div class="match-col">
+                ${p.left.map((t,i)=>{
+                    let cls='match-cell';
+                    if(leftUsed.includes(i))cls+=' paired';
+                    else if(actL===i)cls+=' active';
+                    return `<div class="${cls}" onclick="matchClickL(${i})">${t}</div>`;
+                }).join('')}
+            </div>
+            <div class="match-col" style="gap:8px;justify-content:space-around">
+                ${p.left.map((_,i)=>{
+                    const paired=ps.find(x=>x[0]===i);
+                    return `<div style="height:48px;display:flex;align-items:center;justify-content:center;color:#d4af37;font-size:18px">${paired?'↔':'—'}</div>`;
+                }).join('')}
+            </div>
+            <div class="match-col">
+                ${rOrd.map(i=>{
+                    const t=p.right[i];
+                    let cls='match-cell';
+                    if(rightUsed.includes(i))cls+=' paired';
+                    return `<div class="${cls}" onclick="matchClickR(${i})">${t}</div>`;
+                }).join('')}
+            </div>
+        </div>
+        ${p.hint?`<div class="puzzle-hint">💡 提示：${p.hint}</div>`:''}
+        <div style="margin-top:15px;text-align:right">
+            <button class="btn-ghost" onclick="resetMatch()" style="color:#ff6666;border-color:#ff6666">清 空</button>
+            <button class="btn-ghost" onclick="submitMatch()">提 交 (${ps.length}/${p.left.length})</button>
+        </div>`;
+    }
+    return `
+    <div class="scene-title">${r.title} · 试 炼</div>
+    <div class="scene-meta">${ZONES[r.zone].name} · ${r.ch}</div>
+    <div class="puzzle">
+        <div class="puzzle-label">◆ 机 关 谜 题</div>
+        ${ui}
+        <div class="attempt-counter">已尝试 ${attempts}/3</div>
+        <div id="puzzle-fb"></div>
+    </div>`;
+}
+
+// ============ 各类谜题提交 ============
+function submitFill(){
+    const inp=document.getElementById('user-answer');const v=inp.value.trim();
+    if(!v)return;sfxClick();
+    const r=ROOMS[state.currentRoom];const ok=checkFill(r.puzzle,v);
+    handleResult(ok,r.puzzle.a[0]);
+}
+function submitChoice(idx){
+    sfxClick();const r=ROOMS[state.currentRoom];const ok=idx===r.puzzle.correct;
+    const ans=String.fromCharCode(65+r.puzzle.correct)+'. '+r.puzzle.options[r.puzzle.correct];
+    handleResult(ok,ans);
+}
+function submitMultifill(){
+    sfxClick();const r=ROOMS[state.currentRoom];const p=r.puzzle;
+    const vals=p.fields.map((f,i)=>document.getElementById('mf-'+i).value.trim());
+    state.flags.puzzleState.vals=vals;
+    let allOk=true;
+    for(let i=0;i<p.fields.length;i++){
+        const u=normalize(vals[i]);
+        const ok=p.fields[i].a.some(a=>{const na=normalize(a);return na===u||u.indexOf(na)>=0||(na.indexOf(u)>=0&&u.length>=1)});
+        if(!ok){allOk=false;break}
+    }
+    const refAns=p.fields.map(f=>f.a[0]).join(' / ');
+    handleResult(allOk,refAns);
+}
+function toggleMulti(i){
+    sfxClick();
+    if(!state.flags.puzzleState.sel) state.flags.puzzleState.sel=[];
+    const s=state.flags.puzzleState.sel;
+    const k=s.indexOf(i);
+    if(k>=0) s.splice(k,1); else s.push(i);
+    renderStage();
+}
+function submitMulti(){
+    sfxClick();const r=ROOMS[state.currentRoom];const p=r.puzzle;
+    const sel=state.flags.puzzleState.sel||[];
+    const correct=p.correct.slice().sort((a,b)=>a-b);
+    const userSel=sel.slice().sort((a,b)=>a-b);
+    const ok=correct.length===userSel.length&&correct.every((v,i)=>v===userSel[i]);
+    const refAns=correct.map(i=>p.options[i]).join('、');
+    handleResult(ok,refAns);
+}
+function orderClick(pos){
+    sfxClick();
+    const ps=state.flags.puzzleState;
+    if(ps.sel===-1||ps.sel===undefined){ps.sel=pos}
+    else if(ps.sel===pos){ps.sel=-1}
+    else{
+        const a=ps.order;[a[ps.sel],a[pos]]=[a[pos],a[ps.sel]];
+        ps.sel=-1;
+    }
+    renderStage();
+}
+function submitOrder(){
+    sfxClick();const r=ROOMS[state.currentRoom];const p=r.puzzle;
+    const order=state.flags.puzzleState.order;
+    const ok=order.every((v,i)=>v===p.correct[i]);
+    const refAns=p.correct.map(i=>p.items[i]).join(' → ');
+    handleResult(ok,refAns);
+}
+function matchClickL(i){
+    sfxClick();const ps=state.flags.puzzleState;
+    if(ps.pairs.some(x=>x[0]===i))return;
+    ps.activeL=(ps.activeL===i?-1:i);renderStage();
+}
+function matchClickR(i){
+    sfxClick();const ps=state.flags.puzzleState;
+    if(ps.pairs.some(x=>x[1]===i))return;
+    if(ps.activeL<0){showToast('请先点击左侧一项');return}
+    ps.pairs.push([ps.activeL,i]);ps.activeL=-1;renderStage();
+}
+function resetMatch(){
+    state.flags.puzzleState.pairs=[];state.flags.puzzleState.activeL=-1;renderStage();
+}
+function submitMatch(){
+    sfxClick();const r=ROOMS[state.currentRoom];const p=r.puzzle;
+    const ps=state.flags.puzzleState.pairs||[];
+    if(ps.length!==p.left.length){showToast('请完成所有配对');return}
+    const mk=ps.slice().sort((a,b)=>a[0]-b[0]);
+    const ck=p.pairs.slice().sort((a,b)=>a[0]-b[0]);
+    const ok=mk.every((x,i)=>x[0]===ck[i][0]&&x[1]===ck[i][1]);
+    const refAns=p.pairs.map(x=>`${p.left[x[0]]} ↔ ${p.right[x[1]]}`).join('；');
+    handleResult(ok,refAns);
+}
+
+function handleResult(ok,refAns){
+    state.flags.attempts=(state.flags.attempts||0)+1;
+    const fb=document.getElementById('puzzle-fb');
+    if(!fb)return;
+    if(ok){
+        sfxCorrect();
+        if(state.flags.attempts===1 && !state.visited[state.currentRoom]){
+            state.puzzleFirstTry[state.currentRoom]=true;
+        }
+        fb.innerHTML=`<div class="puzzle-feedback pf-right">✓ 回答正确！守护灵向你颔首。${state.flags.attempts===1?'<br><span style="color:#d4af37">★ 首答即中 · 加分</span>':''}</div>`;
+        setTimeout(()=>awardRoom(),1300);
+    }else if(state.flags.attempts>=3){
+        sfxWrong();
+        fb.innerHTML=`<div class="puzzle-feedback pf-hint">⚠ 三次已竭尽。参考答案：<strong>${refAns}</strong>。守护灵叹息——此次暂且放你们一马。</div>`;
+        setTimeout(()=>awardRoom(),2800);
+    }else{
+        sfxWrong();
+        fb.innerHTML=`<div class="puzzle-feedback pf-wrong shake">✗ 答案不符。再想想。(剩余 ${3-state.flags.attempts} 次)</div>`;
+    }
+}
+
+function awardRoom(){
+    const rid=state.currentRoom;
+    if(!state.visited[rid]){
+        state.visited[rid]=true;state.badges.push(rid);
+        if(ROOMS[rid].clue) state.clues.push({rid,text:ROOMS[rid].clue});
+        sfxBadge();
+    }
+    state.flags.roomStep='after';
+    saveGame(true);renderStage();renderSidebar();
+}
+
+function leaveRoom(){
+    const rid=state.currentRoom;const z=ROOMS[rid].zone;
+    const zn=ZONES[z];let done=0;
+    for(let i=1;i<=zn.count;i++) if(state.visited[z+i]) done++;
+    if(done===zn.count&&!state.keys.includes(z)){
+        state.keys.push(z);
+        showToast(`🗝 获得主任之钥：${zn.key}`);sfxBadge();
+    }
+    state.stage='zone';saveGame(true);renderStage();renderSidebar();
+}
+
+// ============ 推理厅 · 9 问 + 评级系统 ============
+const DEDUCTION_QS=[
+    {id:'q1_truth',q:'综合所有线索，千卷之书 / Millennium Codex 的真实去向是？',type:'choice',
+        options:[
+            '被外人盗走',
+            '被馆长单独私藏',
+            '被 6 位主任 + 馆长合力"解书散珠"·化为 45 枚词卷徽章散落',
+            '仍在石台上·只是被隐形化'
+        ],correct:2,
+        refClues:['E6（老奥手稿）','T1（老杨支持）','R1（老培铭文）']},
+    {id:'q2_mastermind',q:'这场"解书散珠"方案的主谋是？',type:'choice',
+        options:['词汇·老莎','语法·老钦','完形·老米','阅读·老培','翻译·老杨','写作·老奥','馆长·石漪兰（Rosetta）'],
+        correct:6,
+        refClues:['W1（入口刻 W·0423）','6 位主任集体支持·馆长居中']},
+    {id:'q3_dissent',q:'密会中唯一投"反对"票的主任是？',type:'choice',
+        options:['词汇·老莎','语法·老钦','完形·老米','阅读·老培','翻译·老杨','写作·老奥'],
+        correct:1,
+        refClues:['G1（门左小字·严格·反对派）','G8（老钦临别宣言·反对散播）']},
+    {id:'q4_abstain',q:'密会中投"弃权"票的主任是？',type:'choice',
+        options:['词汇·老莎','语法·老钦','完形·老米','阅读·老培','翻译·老杨','写作·老奥'],
+        correct:0,
+        refClues:['W10（形近之井·老莎·古典与现代之间弃权）']},
+    {id:'q5_supporters',q:'密会中投"赞成"票的四位主任是？（多选 4 项）',type:'multi',
+        options:['词汇·老莎','语法·老钦','完形·老米','阅读·老培','翻译·老杨','写作·老奥'],
+        correct:[2,3,4,5],
+        refClues:['C4 老米·R1 老培·T1 老杨·E1/E6 老奥 各自彩蛋']},
+    {id:'q6_date',q:'密会召开的确切日期？（任意格式均可·如 2025.4.23 或 2025 年 4 月 23 日）',type:'fill',
+        a:['2025.4.23','2025年4月23日','20250423','2025-4-23','2025/4/23','4.23','4月23日','423'],
+        refClues:['W1（入口石刻 W·0423）','世界读书日 / 莎翁生卒日']},
+    {id:'q7_why_date',q:'为什么偏偏选定那一天召开密会？',type:'choice',
+        options:[
+            '馆长个人生日',
+            '4 月 23 日 = 世界读书日 / 莎士比亚生卒日·象征"阅读属于全人类"',
+            '阅卷系统例行维护日',
+            '伦敦天气最好的一天'
+        ],correct:1,
+        refClues:['W1（W·0423）','UNESCO 世界读书日']},
+    {id:'q8_temperature',q:'六扉封蜡熔化温度 1066°C 的真正象征意义是？',type:'choice',
+        options:[
+            '金铜封蜡的物理熔点',
+            '1066 年诺曼征服 —— 英语语言的"融合"起点·象征"开源与融合"',
+            '馆长的员工工号',
+            '归档处防火上限'
+        ],correct:1,
+        refClues:['封蜡熔解现场观察','英语史：1066 = Norman Conquest']},
+    {id:'q9_motive',q:'整场"失窃"事件的真实动机是？',type:'choice',
+        options:[
+            '馆长想永久占有千卷之书',
+            '阻止阅卷组继承人争夺权威',
+            '让 45 枚词卷徽章从"归档石台"走进"每位考生的手账本"·实现 201 英语知识普惠与代际传承',
+            '报复前馆长严苛制度'
+        ],correct:2,
+        refClues:['馆长独白（终章）','E6 老奥手稿','T1 老杨铭文']}
+];
+
+function enterDeduction(){
+    state.stage='deduction';
+    if(!state.flags.dedAns) state.flags.dedAns={};
+    sfxDoor();renderStage();
+}
+
+function renderDeduction(){
+    if(state.deduction){renderDeductionReview();return}
+    if(!state.flags.dedAns) state.flags.dedAns={};
+    const ans=state.flags.dedAns;
+    const allAnswered=DEDUCTION_QS.every(q=>{
+        const a=ans[q.id];
+        if(q.type==='multi') return Array.isArray(a)&&a.length>0;
+        if(q.type==='fill') return typeof a==='string'&&a.trim().length>0;
+        return a!==undefined&&a!==null&&a!==-1;
+    });
+    const blocks=DEDUCTION_QS.map((q,idx)=>{
+        let body='';
+        if(q.type==='choice'){
+            body=q.options.map((o,i)=>`<button class="btn-choice ${ans[q.id]===i?'selected':''}" onclick="dedPick('${q.id}',${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('');
+        }else if(q.type==='multi'){
+            const sel=ans[q.id]||[];
+            body=`<div class="multi-opts">${q.options.map((o,i)=>`
+                <div class="multi-opt ${sel.includes(i)?'checked':''}" onclick="dedToggle('${q.id}',${i})">
+                    <div class="multi-check">${sel.includes(i)?'✓':''}</div>
+                    <div>${o}</div>
+                </div>`).join('')}</div>`;
+        }else if(q.type==='fill'){
+            body=`<input type="text" class="puzzle-input" value="${(ans[q.id]||'').replace(/"/g,'&quot;')}" placeholder="输入答案..." onchange="dedFill('${q.id}',this.value)" onblur="dedFill('${q.id}',this.value)">`;
+        }
+        const refs=q.refClues.map(c=>`<span style="display:inline-block;background:rgba(212,175,55,.15);border:1px solid #5a4a1a;color:#d4af37;padding:2px 8px;margin:2px;border-radius:2px;font-size:12px">${c}</span>`).join('');
+        return `<div class="puzzle" style="margin:20px 0">
+            <div class="puzzle-label">◆ 推 理 题 ${idx+1} / ${DEDUCTION_QS.length}</div>
+            <div class="puzzle-q">${q.q}</div>
+            ${body}
+            <div style="margin-top:12px;font-size:13px;color:#888">🔗 相关线索：${refs}</div>
+        </div>`;
+    }).join('');
+    document.getElementById('stage').innerHTML=`
+    <div class="header-bar">
+        <div class="mini-logo">☗ 推 理 厅 · 拼 合 真 相</div>
+        <button class="btn-ghost" onclick="state.stage='sandbox';renderStage()">← 返回沙盒</button>
+    </div>
+    <div class="scene-title">推理厅 · 9 问定真相</div>
+    <div class="narration">
+        六大展区之下，一间穹顶高耸的密室——圆墙上投影着你们走过的 45 房剪影。
+        馆长林溯涟的声音从四面传来：<br><br>
+        「研究员们，进终章前，我需要你们独立拼合真相。<br>
+        这 9 道题，都是你们手账本里的线索能直接或间接回答的。<br>
+        不必追求满分——但尽你所能。<br>
+        定稿之后，我才会见你们。」
+    </div>
+    <div style="background:rgba(139,0,0,.15);border:1px solid #5a2a2a;padding:15px 20px;margin:20px 0;border-radius:3px;font-size:14px;color:#e8d7b0">
+        💡 <strong style="color:#d4af37">答题规则</strong>：可来回修改答案，直到点击「定稿」——定稿后将锁定并进入终章。正确率计入最终评级。<br>
+        📖 手账本（右侧边栏）中的所有线索均可自由查阅。
+    </div>
+    ${blocks}
+    <div style="text-align:center;margin-top:40px;padding:25px;background:rgba(212,175,55,.1);border:1px solid #d4af37;border-radius:5px">
+        <div style="color:#d4af37;font-size:14px;letter-spacing:3px;margin-bottom:15px">进度：已答 ${Object.keys(ans).filter(k=>{const v=ans[k];if(Array.isArray(v))return v.length>0;return v!==undefined&&v!==null&&v!==''}).length} / ${DEDUCTION_QS.length} 题</div>
+        <button class="btn-primary" onclick="submitDeduction()" ${allAnswered?'':'disabled style="opacity:.4;cursor:not-allowed"'}>
+            ${allAnswered?'🔒 定稿 · 进入终章':'请先完成全部 9 题'}
+        </button>
+    </div>`;
+}
+
+function dedPick(qid,idx){
+    sfxClick();
+    if(!state.flags.dedAns) state.flags.dedAns={};
+    state.flags.dedAns[qid]=idx;renderStage();
+}
+function dedToggle(qid,idx){
+    sfxClick();
+    if(!state.flags.dedAns) state.flags.dedAns={};
+    if(!Array.isArray(state.flags.dedAns[qid])) state.flags.dedAns[qid]=[];
+    const arr=state.flags.dedAns[qid];const k=arr.indexOf(idx);
+    if(k>=0) arr.splice(k,1); else arr.push(idx);
+    renderStage();
+}
+function dedFill(qid,v){
+    if(!state.flags.dedAns) state.flags.dedAns={};
+    state.flags.dedAns[qid]=v;
+}
+
+function submitDeduction(){
+    const ans=state.flags.dedAns||{};
+    const results=DEDUCTION_QS.map(q=>{
+        const a=ans[q.id];let ok=false;let userText='';let refText='';
+        if(q.type==='choice'){
+            ok=(a===q.correct);
+            userText=(a!==undefined&&a>=0)?q.options[a]:'（未作答）';
+            refText=q.options[q.correct];
+        }else if(q.type==='multi'){
+            const userSel=(Array.isArray(a)?a:[]).slice().sort((x,y)=>x-y);
+            const cor=q.correct.slice().sort((x,y)=>x-y);
+            ok=userSel.length===cor.length&&userSel.every((v,i)=>v===cor[i]);
+            userText=userSel.length?userSel.map(i=>q.options[i]).join('、'):'（未作答）';
+            refText=cor.map(i=>q.options[i]).join('、');
+        }else if(q.type==='fill'){
+            const u=normalize(a);
+            ok=u.length>0&&q.a.some(x=>{const nx=normalize(x);return nx===u||u.indexOf(nx)>=0||(nx.indexOf(u)>=0&&u.length>=3)});
+            userText=(a||'').trim()||'（未作答）';
+            refText=q.a[0];
+        }
+        return {id:q.id,q:q.q,ok,userText,refText};
+    });
+    const correctCount=results.filter(r=>r.ok).length;
+    state.deduction={answers:ans,results,correctCount,total:DEDUCTION_QS.length,submittedAt:new Date().toISOString()};
+    sfxBadge();saveGame(true);renderSidebar();
+    // 先展示推理回顾页，再进终章
+    state.flags.dedReviewShown=true;
+    renderDeductionReview();
+}
+
+function renderDeductionReview(){
+    const d=state.deduction;
+    const grade=computeGrade();
+    const items=d.results.map((r,i)=>`
+        <div style="background:rgba(26,10,5,.5);border:1px solid ${r.ok?'#30ff30':'#ff6666'};border-left:4px solid ${r.ok?'#30ff30':'#ff6666'};padding:15px 20px;margin:10px 0;border-radius:3px">
+            <div style="color:${r.ok?'#aaffaa':'#ffaaaa'};font-size:13px;letter-spacing:2px;margin-bottom:6px">${r.ok?'✓ 正确':'✗ 错误'} · 推理题 ${i+1}</div>
+            <div style="color:#fff5e0;font-size:15px;margin-bottom:8px">${r.q}</div>
+            <div style="font-size:13px;color:#b8a87a">你的答案：<span style="color:${r.ok?'#d4af37':'#ff9090'}">${r.userText}</span></div>
+            ${r.ok?'':`<div style="font-size:13px;color:#888;margin-top:4px">参考答案：<span style="color:#d4af37">${r.refText}</span></div>`}
+        </div>`).join('');
+    document.getElementById('stage').innerHTML=`
+    <div class="header-bar">
+        <div class="mini-logo">☗ 推理厅 · 定 稿 审 阅</div>
+        <div class="progress-bar">得分 ${d.correctCount}/${d.total}</div>
+    </div>
+    <div class="scene-title">推理回顾 · ${d.correctCount} / ${d.total} 命中</div>
+    <div class="narration">
+        馆长林溯涟走出阴影，手中一本册页缓缓翻页——正是你们定稿的答卷。<br>
+        她不置可否地一笑：「拼得如何，自己看。」
+    </div>
+    ${items}
+    <div class="clue-popup" style="text-align:center;margin-top:30px">
+        <div class="clue-popup-title">★ 综合评级（推理 60% + 谜题首答率 30% + 线索 10%）</div>
+        <div style="color:#d4af37;font-size:36px;font-family:'STKaiti',serif;letter-spacing:6px;margin:15px 0">${grade.rankLabel}</div>
+        <div style="color:#e8d7b0;font-size:14px;line-height:1.8">
+            推理：${d.correctCount}/${d.total}（${grade.deductionPts.toFixed(1)}/60）<br>
+            谜题首答率：${grade.firstTryCount}/45（${grade.firstTryPts.toFixed(1)}/30）<br>
+            线索收集：${grade.clueCount}/${grade.clueTotal}（${grade.cluePts.toFixed(1)}/10）<br>
+            <strong style="color:#d4af37">总分 ${grade.total.toFixed(1)} / 100</strong>
+        </div>
+    </div>
+    <div style="text-align:center;margin-top:30px">
+        <button class="btn-primary" onclick="enterFinale()" style="font-size:20px;padding:16px 60px">☆ 进 入 终 章 · 馆 长 密 室 ☆</button>
+    </div>`;
+}
+
+function computeGrade(){
+    const total44=45;
+    const firstTryCount=Object.keys(state.puzzleFirstTry||{}).length;
+    const firstTryPts=(firstTryCount/total44)*30;
+    let clueTotal=0;Object.keys(ROOMS).forEach(rid=>{if(ROOMS[rid].clue)clueTotal++});
+    const clueCount=(state.clues||[]).length;
+    const cluePts=clueTotal?(clueCount/clueTotal)*10:0;
+    const d=state.deduction;
+    const deductionPts=d?(d.correctCount/d.total)*60:0;
+    const total=firstTryPts+cluePts+deductionPts;
+    let rank,rankLabel,rankDesc;
+    if(total>=90){rank='S';rankLabel='特等研究员';rankDesc='真相侦破·知识归位·拟颁发印刷版玄卷周边。'}
+    else if(total>=75){rank='A';rankLabel='一等研究员';rankDesc='推理精密·知识扎实·可进入 201 阅卷组实习名单。'}
+    else if(total>=60){rank='B';rankLabel='二等研究员';rankDesc='主线已通·细节待补·建议二刷时政专题。'}
+    else if(total>=45){rank='C';rankLabel='三等研究员';rankDesc='真相探到边缘·若干关键线索未串联。'}
+    else{rank='D';rankLabel='返聘见习';rankDesc='建议结合手账本线索回炉再战。下届考研季再见。'}
+    return {total,rank,rankLabel,rankDesc,firstTryCount,firstTryPts,clueCount,clueTotal,cluePts,deductionPts};
+}
+
+
+function askFollowup(idx){
+    const rid=state.currentRoom;const r=ROOMS[rid];
+    const fus=(typeof FOLLOWUPS!=='undefined'&&FOLLOWUPS[rid])||[];const fu=fus[idx];if(!fu)return;
+    if(typeof sfxSelect==='function')sfxSelect();
+    document.querySelectorAll('.btn-topic').forEach((b,i)=>b.classList.toggle('active',i===idx));
+    const div=document.getElementById('followup-display');
+    div.innerHTML=`<div class="guardian">
+        <div class="guardian-header">
+            <div class="guardian-avatar">${r.guardian.emoji}</div>
+            <div class="guardian-name">${r.guardian.name}</div>
+        </div>
+        <div class="guardian-speech">${fu.reply}</div>
+    </div>`;
+}
+
+function enterFinale(){state.stage='finale';state.flags.finaleStep=0;sfxDoor();renderStage()}
+
+const FINALE=[
+    {emoji:'🚪',n:'旁白',speech:'B3F 最深处·一扇羊皮烫金的石门。门上 45 个凹槽·6 个主任之钥孔。你们依次嵌入 45 徽章·6 把主任之钥——六扉归位·石门自行开启·一束琥珀色的光冲天。'},
+    {emoji:'🏛',n:'旁白',speech:'密室古今交融——左侧中世纪羊皮书架·右侧现代印刷机与 AI 语言模型终端·中央一座圆形重铸炉。馆长石漪兰立于炉旁·月白长衫·手中一支鹅毛笔。'},
+    {emoji:'👩‍🏫',n:'馆长石漪兰（Rosetta）',speech:'欢迎。你们走完了 45 房。我等了 9 天 9 夜——也等了 29 年。'},
+    {emoji:'👩‍🏫',n:'馆长石漪兰',speech:'29 年前的 2001 年·我入职 201 阅卷组·第一份工作是誊抄千卷之书。誊了三年。我问老馆长："这卷给谁？" 他说："给阅卷组。" 我问："那考生呢？" 他说："考生自己查字典。"'},
+    {emoji:'👩‍🏫',n:'馆长石漪兰',speech:'从那天起我下定决心——当我成为馆长那天·我要让千卷之书被阅读·被使用·被内化。不是通过考试——是通过"每一封英文邮件·每一封书信·每一个人与世界交流的时刻"。这就是"解书散珠"方案的由来。'},
+    {emoji:'👩‍🏫',n:'馆长石漪兰',speech:'我说服了老米（他懂"上下文即全部"）、老培（他懂"阅读造就完整之人"）、老杨（他懂"信达雅本该普惠"）、老奥（他懂"清白文字属于每个人"）。老莎弃权——他在古典与现代之间犹豫。只有老钦反对——因为他"没有严格语法规则·就是语言的塌陷"。但他没阻止——他用生成语法自己说服了自己："若规则只为封锁·规则本身就该被重写。"'},
+    {emoji:'🔘',n:'馆长石漪兰',speech:'现在——45 枚徽章已集齐。请按下重铸按钮·选择千卷之书的未来。'}
+];
+
+function renderFinale(){
+    const step=state.flags.finaleStep||0;
+    if(step<FINALE.length){
+        const p=FINALE[step];
+        document.getElementById('stage').innerHTML=`
+        <div class="header-bar">
+            <div class="mini-logo">✦ 终章 · 馆长密室 ✦</div>
+            <div class="progress-bar">${step+1}/${FINALE.length}</div>
+        </div>
+        <div class="guardian">
+            <div class="guardian-header">
+                <div class="guardian-avatar">${p.emoji}</div>
+                <div class="guardian-name">${p.n}</div>
+            </div>
+            <div class="guardian-speech">${p.speech}</div>
+        </div>
+        <div style="text-align:center;margin-top:40px">
+            <button class="btn-primary" onclick="finaleNext()">${step<FINALE.length-1?'继 续':'作 出 抉 择'}</button>
+        </div>`;
+    }else{
+        document.getElementById('stage').innerHTML=`
+        <div class="header-bar">
+            <div class="mini-logo">✦ 终章 · 最后抉择 ✦</div>
+        </div>
+        <div class="scene-title">玄卷的未来，由你们决定</div>
+        <div class="narration">重铸炉上三个按钮。你们沉默良久——然后伸手。</div>
+        <div style="margin:40px 0">
+            <button class="btn-choice" onclick="chooseEnding('A')" style="background:rgba(139,0,0,.2);padding:20px">
+                <strong style="color:#d4af37;font-size:18px">按钮 A · 复原派</strong><br>
+                <span style="color:#e8d7b0">重铸成新金箔玄卷，原封不动放回金柜——维持权威，守住传统。</span>
+            </button>
+            <button class="btn-choice" onclick="chooseEnding('B')" style="background:rgba(212,175,55,.2);padding:20px">
+                <strong style="color:#d4af37;font-size:18px">按钮 B · 普惠派</strong><br>
+                <span style="color:#e8d7b0">让 48 枚徽章化为无数副本 fork 至 201 阅卷组所有教员与每位 408 考生的手账本——彻底开源，知识回归求学者。</span>
+            </button>
+            <button class="btn-choice" onclick="chooseEnding('C')" style="background:linear-gradient(135deg,rgba(139,0,0,.2),rgba(212,175,55,.2));padding:20px">
+                <strong style="color:#d4af37;font-size:18px">按钮 C · 折中派</strong><br>
+                <span style="color:#e8d7b0">铸成一枚拇指大的"红玺"（金印），每年由一位新研究员继承；同时释放副本——权威与普惠双轨。</span>
+            </button>
+        </div>`;
+    }
+}
+function finaleNext(){state.flags.finaleStep++;sfxSelect();renderStage()}
+function chooseEnding(e){state.ending=e;state.stage='ending';sfxDoor();saveGame(true);renderStage()}
+
+function renderEnding(){
+    const e=state.ending;
+    const endings={
+        A:{t:'结局 A · 守护者',c:`千卷之书重铸完成·原封不动放回石台。6 位主任眼中闪过失望与理解交织的复杂神色。<br><br>馆长轻叹："你们让它——又回去了。也许你们没准备好。没关系·再等下一届。"<br><br>你们获得"守护者"称号。密室灯光一盏一盏熄灭——馆长消失了。<br><br>石台依旧锁着。千卷之书依旧是中世纪羊皮手抄。<br><br>走出归档处·晨雾微散。未名湖水面平静——但你们心里隐隐不安：这道封蜡·是否只是在等待下一次被熔化？`,q:'千卷藏于石台·等待下一次阅读。'},
+        B:{t:'结局 B · 传书者',c:`千卷之书化为羊皮尘埃与光。45 枚词卷徽章各自进入你们的手账本——每一页都显出琥珀色的英文手稿。<br><br>馆长石漪兰露出你们见过的第一个笑："你们——做了我 29 年前想做而没做的事。从今天起·千卷之书不再属于石台·属于每一个翻开它、读出它、写下它的人。"<br><br>她走到你们中间·问："谁愿意接任下一任馆长？"<br><br>你们沉默·看彼此。最年轻的那位研究员·轻轻举起了手。<br><br>馆长把最后一枚词卷徽章——"read"——放进那位研究员的手心。徽章融入皮肤·消失不见。<br><br>晨雾散·未名湖晨光铺满你们的肩。你们翻开手账本·看见多了一行手写体——是你们自己的笔迹·却不记得写过：`,q:'To read is to be alive. 千卷之书在我这里。',best:true},
+        C:{t:'结局 C · 译者',c:`千卷之书铸成一枚拇指大的"译印"——同时向外流出 201 份副本·发向归档处所有藏室。<br><br>馆长温和："你们选了一条最难的路——既要有原典的权威·也要有译本的流传。这就像翻译——信求核心·达求读者·雅求时代。"<br><br>她向你们深深一鞠躬——6 位主任也同步鞠躬。<br><br>译印被封入微型石台·但石台的钥匙每年轮换到下一代研究员手中。副本则在 201 阅卷组所有教员之间流转——每人每年轮读一模块·写一份读书札记。<br><br>原典与译本同时存在。<br><br>晨光下离开归档处·你们心里明白——这就是语言最朴素的样子：核心稳定·翻译多元·在一代代的转译中·千卷之书永远活着。`,q:'原典与译本·信达雅兼。'}
+    };
+    const end=endings[e];
+    const grade=computeGrade();
+    document.getElementById('stage').innerHTML=`
+    <div class="ending-screen">
+        <h1>${end.t}</h1>
+        <p>${end.c}</p>
+        <div class="final-quote">「${end.q}」</div>
+        ${end.best?`<div style="color:#d4af37;text-align:center;font-size:15px;letter-spacing:4px;margin-bottom:30px">★ 制作组推荐结局 ★</div>`:''}
+        <div class="clue-popup" style="max-width:640px;margin:30px auto;text-align:center">
+            <div class="clue-popup-title">★ 结业评级 · 阅 卷 组 归 档 处</div>
+            <div style="color:#d4af37;font-size:42px;font-family:'STKaiti',serif;letter-spacing:8px;margin:20px 0;text-shadow:0 0 20px #d4af37">${grade.rankLabel}</div>
+            <div style="color:#e8d7b0;font-size:14px;line-height:1.9">
+                推理：${state.deduction?state.deduction.correctCount:0}/${DEDUCTION_QS.length}（${grade.deductionPts.toFixed(1)}/60）<br>
+                谜题首答：${grade.firstTryCount}/45（${grade.firstTryPts.toFixed(1)}/30）<br>
+                线索：${grade.clueCount}/${grade.clueTotal}（${grade.cluePts.toFixed(1)}/10）<br>
+                <strong style="color:#d4af37;font-size:18px">总分 ${grade.total.toFixed(1)} / 100</strong>
+            </div>
+            <div style="color:#b8a87a;font-style:italic;margin-top:15px;font-size:13px">${grade.rankDesc}</div>
+        </div>
+        <div class="narration" style="margin-top:40px">
+            <strong>尾声 · 晨雾微散</strong><br><br>
+            清晨 6:00·晨雾微散。<br>
+            你们手账本上 45 枚徽章琥珀流转。<br><br>
+            6 位主任依次走过——<br>
+            <em>老莎："All the world's a stage——你们是下一幕的演员。"</em><br>
+            <em>老钦："Deep structure——你们从此有了自己的底层语法。"</em><br>
+            <em>老米："Context is everything——你们就是语境本身。"</em><br>
+            <em>老培："Reading maketh a full man——你们已满溢。"</em><br>
+            <em>老杨："信达雅——你们抵达的是第三重。"</em><br>
+            <em>老奥："Good prose is like a windowpane——愿你们永远透明。"</em><br><br>
+            馆长远远挥手。金字门牌在阳光下闪了一下：<strong style="color:#d4af37;font-family:'STKaiti',serif;letter-spacing:3px">"201·漪兰·求真"</strong>
+        </div>
+        <div style="text-align:center;margin-top:40px">
+            <button class="btn-primary" onclick="exportPDF()">📄 导出通关纪念册 PDF</button>
+            <button class="btn-ghost" onclick="resetGame()" style="margin-left:10px">重新开始 · 探索其他结局</button>
+            <div style="margin-top:15px;color:#888;font-size:13px;letter-spacing:2px">徽章收集：${state.badges.length}/45 · 线索：${state.clues.length} · 通关结局：${e}</div>
+        </div>
+    </div>`;
+    if(end.best) sfxBadge();
+}
+
+// ============ PDF 导出 ============
+function exportPDF(){
+    buildPrintSheet();
+    setTimeout(()=>window.print(),300);
+}
+function buildPrintSheet(){
+    const ps=document.getElementById('print-sheet');
+    const date=state.startDate?new Date(state.startDate):new Date();
+    const endDate=new Date();
+    const endingText={A:'守护者',B:'传火者 ★',C:'辩证者'}[state.ending]||'调查进行中';
+    const endQuote={A:'知识藏于金柜，等待下一次觉醒。',B:'玄卷在我这里。我就是玄卷。',C:'权威与普惠，对立统一。'}[state.ending]||'';
+    let html='';
+
+    const grade=computeGrade();
+    // 封面
+    html+=`<div class="print-page">
+        <div class="print-cover-logo">201·漪兰·求真</div>
+        <div class="print-cover-sub">失 窃 档 案 · 千 卷 之 书 之 谜</div>
+        <div class="print-cover-title">通 关 纪 念 册</div>
+        <div class="print-cover-ending">结 局 · ${endingText} · ${grade.rankLabel}</div>
+        <div class="print-cover-date">
+        起始：${date.toLocaleDateString('zh-CN')} &nbsp;·&nbsp; 归档：${endDate.toLocaleDateString('zh-CN')}<br>
+        徽章收集：${state.badges.length} / 45 &nbsp;·&nbsp; 主任之钥：${state.keys.length} / 6 &nbsp;·&nbsp; 线索：${state.clues.length}<br>
+        综合评分：${grade.total.toFixed(1)} / 100
+        </div>
+    </div>`;
+
+    // 评级与评卷页
+    if(state.deduction){
+        html+=`<div class="print-page">
+            <div class="print-h2">◆ 结 业 评 级 · 阅 卷 组 签 发</div>
+            <div style="text-align:center;margin:10mm 0">
+                <div style="font-size:36pt;color:#8b0000;font-family:'STKaiti',serif;letter-spacing:8pt;margin:8mm 0">${grade.rankLabel}</div>
+                <div style="font-size:13pt;color:#555;font-style:italic">${grade.rankDesc}</div>
+            </div>
+            <table style="width:100%;border-collapse:collapse;margin:10mm 0;font-size:11pt">
+                <tr style="background:#fff4cc"><th style="padding:3mm;border:1pt solid #d4af37;text-align:left">评分项</th><th style="padding:3mm;border:1pt solid #d4af37">得分</th><th style="padding:3mm;border:1pt solid #d4af37">上限</th></tr>
+                <tr><td style="padding:3mm;border:1pt solid #d4af37">推理厅 · ${state.deduction.correctCount}/${state.deduction.total} 命中</td><td style="padding:3mm;border:1pt solid #d4af37;text-align:center">${grade.deductionPts.toFixed(1)}</td><td style="padding:3mm;border:1pt solid #d4af37;text-align:center">60</td></tr>
+                <tr><td style="padding:3mm;border:1pt solid #d4af37">谜题首答率 · ${grade.firstTryCount}/45 房</td><td style="padding:3mm;border:1pt solid #d4af37;text-align:center">${grade.firstTryPts.toFixed(1)}</td><td style="padding:3mm;border:1pt solid #d4af37;text-align:center">30</td></tr>
+                <tr><td style="padding:3mm;border:1pt solid #d4af37">线索收集 · ${grade.clueCount}/${grade.clueTotal} 条</td><td style="padding:3mm;border:1pt solid #d4af37;text-align:center">${grade.cluePts.toFixed(1)}</td><td style="padding:3mm;border:1pt solid #d4af37;text-align:center">10</td></tr>
+                <tr style="background:#fff4cc;font-weight:bold"><td style="padding:3mm;border:1.5pt solid #8b0000">总 分</td><td style="padding:3mm;border:1.5pt solid #8b0000;text-align:center;color:#8b0000">${grade.total.toFixed(1)}</td><td style="padding:3mm;border:1.5pt solid #8b0000;text-align:center">100</td></tr>
+            </table>
+            <div style="font-size:10pt;color:#666;margin-top:8mm;line-height:1.8">
+                评级区间：特等研究员（≥90） · 一等（75-89） · 二等（60-74） · 三等（45-59） · 返聘见习（&lt;45）
+            </div>
+        </div>`;
+
+        // 推理答卷
+        html+=`<div class="print-page">
+            <div class="print-h2">◆ 推 理 厅 答 卷 审 阅</div>
+            <div style="margin-bottom:6mm;font-size:11pt;color:#666">9 道关键推理题 · 按手账本线索复盘真相</div>`;
+        state.deduction.results.forEach((r,i)=>{
+            const bg=r.ok?'#f0fff0':'#fff0f0';const bc=r.ok?'#30aa30':'#aa3030';
+            html+=`<div style="background:${bg};border-left:3pt solid ${bc};padding:3mm 5mm;margin-bottom:3mm;font-size:10.5pt;line-height:1.7">
+                <div style="font-size:9pt;color:${bc};letter-spacing:2pt;margin-bottom:2mm">${r.ok?'✓ 正确':'✗ 错误'} · 推理题 ${i+1}</div>
+                <div style="color:#222;margin-bottom:2mm"><strong>${r.q}</strong></div>
+                <div style="color:#555">你的答案：<span style="color:${bc}">${r.userText}</span></div>
+                ${r.ok?'':`<div style="color:#555;margin-top:1mm">参考答案：<span style="color:#8b0000">${r.refText}</span></div>`}
+            </div>`;
+        });
+        html+=`</div>`;
+    }
+
+    // 徽章收集页
+    html+=`<div class="print-page">
+        <div class="print-h2">◆ 45 徽 章 收 集 志</div>
+        <div style="margin-bottom:6mm;font-size:11pt;color:#666">按六大模块展示全部徽章 · 点亮表示已获得</div>`;
+    Object.keys(ZONES).forEach(z=>{
+        const zn=ZONES[z];
+        html+=`<div style="margin:6mm 0 3mm;color:#8b0000;font-size:13pt;font-weight:bold">${zn.icon} ${zn.name} · ${zn.mod}（${zn.count} 章）</div>`;
+        html+=`<div class="print-badge-grid">`;
+        for(let i=1;i<=zn.count;i++){
+            const rid=z+i;const r=ROOMS[rid];
+            const earned=state.badges.includes(rid);
+            const bg=earned?'background:#fff4cc':'background:#f0f0f0;color:#999';
+            html+=`<div class="print-badge-item" style="${bg}">
+                <div class="print-badge-icon">${earned?'🎖':'·'}</div>
+                <div><strong>${rid}</strong></div>
+                <div style="font-size:9pt;margin-top:1mm">${r.badge}</div>
+                <div style="font-size:8pt;color:#888;margin-top:1mm">${r.title}</div>
+            </div>`;
+        }
+        html+=`</div>`;
+    });
+    html+=`</div>`;
+
+    // 线索时间轴页
+    if(state.clues.length>0){
+        html+=`<div class="print-page">
+            <div class="print-h2">◆ 调 查 线 索 时 间 轴</div>
+            <div style="margin-bottom:6mm;font-size:11pt;color:#666">调查过程中收集到的 ${state.clues.length} 条关键线索（按获得时间排序）</div>`;
+        state.clues.forEach((c,i)=>{
+            const r=ROOMS[c.rid];
+            html+=`<div class="print-clue-item">
+                <div class="print-clue-rid">线索 #${i+1} · ${c.rid} · ${ZONES[r.zone].name} · ${r.title}</div>
+                <div>${c.text}</div>
+            </div>`;
+        });
+        html+=`</div>`;
+    }
+
+    // 终章与感言页
+    if(state.ending){
+        html+=`<div class="print-page">
+            <div class="print-h2">◆ 终 章 · ${endingText}</div>
+            <div style="font-size:12pt;line-height:2;margin:8mm 0">${({A:'你们选择了维持金柜——金箔的玄卷被原封放回。但馆长意味深长的目光提醒你们：真正的知识无法被锁住，只是在等待下一次被熔化。',B:'你们选择了散落——玄卷化为金粉与光，散入每一位考研学子的手账本。馆长笑着说："你们做了我 27 年前想做而没做的事。"最年轻的那位研究员举起了手，接过馆长递来的最后一片金箔。',C:'你们选择了折中——玄卷铸成红玺，同时释放 201 份副本流转于阅卷组。权威与普惠同时存在，对立统一，螺旋上升。这是辩证法最朴素的样子。'})[state.ending]}</div>
+            <div class="print-quote">「${endQuote}」</div>
+            <div style="border-top:1pt solid #d4af37;margin-top:15mm;padding-top:8mm;font-size:11pt;line-height:2;color:#333">
+                <strong style="color:#8b0000">—— 5 位主任的临别赠言 ——</strong><br><br>
+                <em>辩证·老马：</em>矛盾不会消失，它只会升华。<br>
+                <em>润之·老毛：</em>没有调查，就没有发言权——今天你们发言了。<br>
+                <em>编年·老史：</em>1840 到 2026，快 200 年了。你们是这 200 年的读者。<br>
+                <em>天平·老思：</em>德与法，在你们心里——平衡了。<br>
+                <em>风云·小时：</em>下一个五年的玄卷，我们见。
+            </div>
+            <div class="print-signature">
+                北京大学 201 英语阅卷组<br>
+                数据归档处 · 馆长 石漪兰 签发<br>
+                ${endDate.toLocaleDateString('zh-CN')}
+            </div>
+        </div>`;
+    }
+
+    ps.innerHTML=html;
+}
+
+// ============ 侧栏渲染 ============
+// ============ 启动 ============
+window.addEventListener('load',()=>{
+    renderStage();renderSidebar();
+    document.getElementById('btn-sfx').classList.toggle('active',sfxOn);
+});
+document.addEventListener('click',()=>{if(!ac)initAudio()},{once:true});
+</script>
+</body>
+</html>
