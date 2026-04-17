@@ -1,5 +1,5 @@
 // 故事模式 · 馆藏外传 Service Worker
-const CACHE = 'story-mode-v1';
+const CACHE = 'story-mode-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -7,6 +7,12 @@ const ASSETS = [
   './engine.js',
   './manifest.json',
   './data/m1-workers.js',
+  './assets/lyon-street.jpg',
+  './assets/silk-workshop.jpg',
+  './assets/uprising.jpg',
+  './assets/london-rain.jpg',
+  './assets/silesia-night.jpg',
+  './assets/paris-study.jpg',
 ];
 
 self.addEventListener('install', e => {
