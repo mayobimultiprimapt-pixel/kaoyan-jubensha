@@ -103,8 +103,18 @@ a.card:focus-visible,button:focus-visible{outline:2px solid #d4af37;outline-offs
 <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
 <script src="data/boot.js"></script>
+<style>
+/* PWA 安装按钮（Android Chrome 显示，iOS Safari 提示手动） */
+.pwa-install{position:fixed;top:16px;right:16px;z-index:200;background:linear-gradient(135deg,#d4af37,#b8860b);color:#0a0a0a;border:none;padding:10px 18px;font-size:14px;letter-spacing:2px;font-family:"Songti SC","SimSun",serif;border-radius:24px;cursor:pointer;box-shadow:0 4px 14px rgba(212,175,55,.4);animation:fadeIn .6s}
+.pwa-install:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(212,175,55,.6)}
+.pwa-install:focus-visible{outline:2px solid #fff5e0;outline-offset:3px}
+.ios-tip{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(14,10,10,.95);color:#fff5e0;padding:14px 20px;border-radius:10px;z-index:200;font-size:13px;letter-spacing:1px;max-width:92vw;text-align:center;border:1px solid #d4af37;box-shadow:0 8px 30px rgba(0,0,0,.6);line-height:1.8;animation:fadeIn .4s}
+.ios-tip .close{position:absolute;top:4px;right:10px;background:none;border:none;color:#d4af37;font-size:18px;cursor:pointer}
+</style>
 </head>
 <body>
+
+<button id="pwa-install-btn" class="pwa-install" style="display:none" onclick="_installPwa()" aria-label="安装到手机主屏">📲 安装到主屏</button>
 
 <div class="hero">
     <div class="logo">考研·归档处</div>
@@ -336,6 +346,58 @@ function openAll(){
 }
 
 document.addEventListener('click',()=>{if(!ac)initAudio()},{once:true});
+
+// ============ PWA 一键安装 ============
+let _pwaPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+    e.preventDefault();_pwaPrompt=e;
+    const btn=document.getElementById('pwa-install-btn');
+    if(btn)btn.style.display='block';
+});
+window.addEventListener('appinstalled',()=>{
+    const btn=document.getElementById('pwa-install-btn');
+    if(btn)btn.style.display='none';
+    _pwaPrompt=null;
+});
+function _installPwa(){
+    if(_pwaPrompt){
+        _pwaPrompt.prompt();
+        _pwaPrompt.userChoice.then(c=>{
+            if(c.outcome==='accepted')document.getElementById('pwa-install-btn').style.display='none';
+            _pwaPrompt=null;
+        });
+    }else{
+        _showIosTip();
+    }
+}
+// iOS Safari 不支持 beforeinstallprompt，单独引导
+function _showIosTip(){
+    if(document.getElementById('ios-tip-box'))return;
+    const ua=navigator.userAgent;
+    const isIos=/iPhone|iPad|iPod/i.test(ua);
+    const isAndroid=/Android/i.test(ua);
+    const d=document.createElement('div');d.id='ios-tip-box';d.className='ios-tip';
+    if(isIos){
+        d.innerHTML='<button class="close" aria-label="关闭">×</button>在 Safari 里：<br>底部 <strong style="color:#d4af37">分享按钮 ⬆</strong> → <strong style="color:#d4af37">添加到主屏幕</strong>';
+    }else if(isAndroid){
+        d.innerHTML='<button class="close" aria-label="关闭">×</button>在 Chrome 里：<br>右上 <strong style="color:#d4af37">⋮ 菜单</strong> → <strong style="color:#d4af37">添加到主屏幕</strong> / <strong style="color:#d4af37">安装应用</strong>';
+    }else{
+        d.innerHTML='<button class="close" aria-label="关闭">×</button>用手机的 Chrome 或 Safari 打开本页，即可"添加到主屏"成为离线 App。';
+    }
+    document.body.appendChild(d);
+    d.querySelector('.close').onclick=()=>d.remove();
+    setTimeout(()=>{if(document.getElementById('ios-tip-box'))d.remove()},12000);
+}
+// iOS 默认没有安装按钮，但在独立模式外显示一个"安装"手动引导
+(function(){
+    const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone;
+    if(isStandalone)return;  // 已安装，不显示
+    const isIos=/iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if(isIos){
+        const btn=document.getElementById('pwa-install-btn');
+        if(btn){btn.style.display='block';btn.textContent='📲 添加到主屏'}
+    }
+})();
 
 // ============ 各科进度显示 ============
 function _readSubjectProgress(subject){

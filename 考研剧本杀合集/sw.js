@@ -1,5 +1,5 @@
 // 考研剧本杀 · 联合归档处 启动器 Service Worker
-const CACHE = 'exam-hub-v2';
+const CACHE = 'exam-hub-v3';
 const ASSETS = [
   './',
   './index.html',
