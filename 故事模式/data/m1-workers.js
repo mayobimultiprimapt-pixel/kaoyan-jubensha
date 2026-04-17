@@ -56,7 +56,7 @@ const STORY = {
     s_workshop1: {
       bg: "silk-workshop",
       name: "丝织工人",
-      face: "⚒️",
+      face: "lyon_weaver",
       pos: "right",
       text: "（汗水从她的额头滴落到丝绸上）\n\n你看到什么了，小子？我每天坐在这织机前 14 个小时。孩子饿死在身边。老板一天赚我们全家一年的钱。",
       choices: [
@@ -68,7 +68,7 @@ const STORY = {
     s_bad_early: {
       bg: "silk-workshop",
       name: "丝织工人",
-      face: "⚒️",
+      face: "lyon_weaver",
       pos: "right",
       text: "（她冷冷地看着你）\n\n……滚出去。你这种人，和楼上那个老板是一伙的。\n\n（你被推搡着赶出工坊。在冷风中你意识到：历史从不为冷眼旁观者开分支。）",
       next: "s_end_bad_early"
@@ -81,7 +81,7 @@ const STORY = {
     s_awake: {
       bg: "silk-workshop",
       name: "丝织工人",
-      face: "⚒️",
+      face: "lyon_weaver",
       pos: "right",
       text: "（她眼睛亮了一下）\n\n你是个有眼睛的人。明天，我们会上街。成千上万的工人。我们没有枪，只有黑旗。如果你懂我们——请替我们记住。",
       next: "s_uprising1"
@@ -118,7 +118,7 @@ const STORY = {
     s_chartism: {
       bg: "london-rain",
       name: "宪章派工人",
-      face: "🎩",
+      face: "chartist",
       pos: "left",
       text: "1836 年的伦敦，下着冷雨。我手里这份请愿书，上面有三百万个签名——占了英国成年男性的半数。\n\n我们要的不是面包——我们要普选权。「人民宪章」六条，会写进大英帝国的宪法。",
       next: "s_chartism2"
@@ -126,7 +126,7 @@ const STORY = {
     s_chartism2: {
       bg: "london-rain",
       name: "宪章派工人",
-      face: "🎩",
+      face: "chartist",
       pos: "left",
       text: "但是议会驳回了我们的请愿——三次。1839、1842、1848。\n\n（他抹了把脸上的雨）\n\n运动失败了。但——我们第一次，作为「阶级」，发出了自己的声音。",
       next: "s_silesia1"
@@ -134,7 +134,7 @@ const STORY = {
     s_silesia1: {
       bg: "silesia-night",
       name: "西里西亚纺织工",
-      face: "🧵",
+      face: "silesia_weaver",
       pos: "right",
       text: "1844 年 6 月 · 普鲁士西里西亚\n\n（她握着一把锤子，眼神像星火）\n\n今晚，我们要砸了这些机器。不是因为我们恨机器——是因为机器下面，压着我们孩子的尸体。",
       next: "s_silesia2"
@@ -147,7 +147,7 @@ const STORY = {
     s_marx1: {
       bg: "paris-study",
       name: "青年马克思",
-      face: "marx_old",
+      face: "marx_young",
       pos: "left",
       text: "（他的书房，满桌手稿。他转头看向你——穿越的人。）\n\n你看见了这三次起义。你告诉我——它们失败的共同原因是什么？",
       choices: [
@@ -159,7 +159,7 @@ const STORY = {
     s_marx_wrong: {
       bg: "paris-study",
       name: "青年马克思",
-      face: "marx_old",
+      face: "marx_young",
       pos: "left",
       text: "武器？不。1831 年里昂的工人一度击溃了政府军，他们缺的从来不是武器。\n\n（他摇摇头）你还没看到本质。",
       next: "s_marx_right"
@@ -167,7 +167,7 @@ const STORY = {
     s_marx_half: {
       bg: "paris-study",
       name: "青年马克思",
-      face: "marx_old",
+      face: "marx_young",
       pos: "left",
       text: "资产阶级强大？——那是表象。你看到的是力量对比，没看到的是：工人阶级不知道自己为什么穷。\n\n没有理论，就不可能有自觉的运动。",
       next: "s_marx_right"
@@ -175,7 +175,7 @@ const STORY = {
     s_marx_right: {
       bg: "paris-study",
       name: "青年马克思",
-      face: "marx_old",
+      face: "marx_young",
       pos: "left",
       text: "对——他们缺的是理论。\n\n哲学家们只用不同的方式解释世界，问题在于——改变世界。\n\n（他把一本薄薄的小册子递给你）\n\n这个，会在 1848 年 2 月 24 日，伦敦，德文版，印出来。",
       next: "s_finale"
